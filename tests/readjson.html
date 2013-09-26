@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Load JSON Test</title>
+	<meta charset="utf-8"> 
+	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="../js/housing.js" charset="utf-8"></script>
+</head>
+<body>
+	<h1>Test Loading JSON</h1>
+	<p>Below should be an inline svg element that shows a floor plan and
+	some circles.  The circles should be placed over the eight rooms in
+	the upper left corner.</p>
+	<h2>Data to Read</h2>
+	<pre>
+{"floor": {
+	"number": 2,
+	"rooms": [
+		{ "number": 2120, "capacity": 3,"occupants": [], "x": 120, "y": 74 },
+		{ "number": 2118, "capacity": 2,"occupants": [], "x": 205, "y": 74 },
+		{ "number": 2114, "capacity": 2,"occupants": [], "x": 262, "y": 74 },
+		{ "number": 2110, "capacity": 2,"occupants": [], "x": 323, "y": 74 },
+		{ "number": 2123, "capacity": 3,"occupants": [], "x": 146, "y": 216 },
+		{ "number": 2119, "capacity": 2,"occupants": [], "x": 205, "y": 216 },
+		{ "number": 2115, "capacity": 2,"occupants": [], "x": 262, "y": 216 },
+		{ "number": 2111, "capacity": 2,"occupants": [], "x": 323, "y": 216 }
+	]
+}}
+</pre>
+	<aside>Data is from <code class="filename">sample.json</code></aside>
+	<h2>The Test</h2>
+	<div class="action"></div>
+	<script>
+d3.json("sample.json",function(err,jsonobj){
+	if(jsonobj){
+		var svg = d3.select("div.action")
+						.append("svg")
+						.attr("width",1024)
+						.attr("height",1325);
+		housing.load(jsonobj,svg);
+	}
+}
+</script>
+</body>
+	
