@@ -1,4 +1,21 @@
+// Software developed by Reginald Pierce for the RIT Honors Program
+// Redistribution or use in any form without express permission
+// of the RIT Honors Program and Reginald Pierce is strictly
+// prohibited.
+
+// All code is contained in the housing namespace
 var housing = {
+	/**
+	 * Loads data for a floor
+	 *
+	 * The load function takes JSON data representing a floor
+	 * plan (with registration information) and displays the
+	 * data on the provided d3.js SVG element.
+	 *
+	 * @param data The JSON.  The format should follow from
+	 * 	/tests/sample.json
+	 * @param d3svg An SVG element in which to draw the data.
+	 */
 	load: function(data,d3svg) {
 		if(!data.number) return;
 		// this href will need to be changed
@@ -27,6 +44,9 @@ var housing = {
 		//Will that be enough?
 	},
 
+	/**
+	 * The style namespace contains functions to style d3 elements
+	 */
 	style: {
 		x: function(d){ return d.x; },
 		y: function(d){ return d.y; },

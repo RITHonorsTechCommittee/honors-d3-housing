@@ -31,6 +31,7 @@
 	<h2>The Test</h2>
 	<div class="action"></div>
 	<script>
+// Create SVG element
 var svg = d3.select("div.action")
 	.append("svg")
 	.attr("width",1024)
@@ -45,6 +46,8 @@ var test1 = function(){
 }
 
 d3.select("div.action").on("click",test1);
+
+//Execute the test
 test1();
 </script>
 </body>
