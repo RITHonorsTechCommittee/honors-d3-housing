@@ -1,4 +1,10 @@
 var housing = {
+	init: function() {
+		housing.tooltip = d3.select("body").append("div")
+			.attr("class","tooltip")
+			.style("opacity", 0);
+	}
+
 	load: function(data,d3svg) {
 		if(!data.number) return;
 		// this href will need to be changed
@@ -11,7 +17,6 @@ var housing = {
 				.attr("y",0)
 				.attr("width",1024)
 				.attr("height",1325)
-				//will we have the right xmlns for this?
 				.attr("xlink:href",imghref);
 		}else{
 			img.attr("xlink:href",imghref);
@@ -24,9 +29,25 @@ var housing = {
 				.attr("cy",housing.style.y)
 				.attr("r",housing.style.r)
 				.attr("fill",housing.style.color)
-		//Will that be enough?
+				.on("mouseover",tooltip_in)
+				.on("mouseout",tooltip_out);
 	},
 
+	tooltip_in: function(d) {
+		housing.tooltip.transition()
+			.duration(200)
+			.style("opacity", .9);
+		var txt = d.number + ( (0 == d.occupants.length)?"":"<br>" ) + d.occupants.join("<br>");
+		housing.tooltip.html(txt)
+			.style("left", (d3.event.pageX) + "px")
+			.style("right", (d3.event.pageY) + "px");
+	}
+	tooltip_out: function(d) {
+		housing.tooltip.transtion()
+			.duration(500)
+			.style("opacity",0);
+	}
+	
 	style: {
 		x: function(d){ return d.x; },
 		y: function(d){ return d.y; },
