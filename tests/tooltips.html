@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tooltip Test</title>
+	<meta charset="utf-8"> 
+	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="../js/housing.js" charset="utf-8"></script>
+</head>
+<body>
+	<h1>Test Tooltips</h1>
+	<p>
+	Tooltips over the circles will show housing registrants the room number
+	as well as who has already registered for the room. This test also requires
+	a rollover effect to be implemented on the circles.
+	</p>
+	<aside>Data is from <code class="filename">sample.json</code></aside>
+	<h2>The Test</h2>
+	<div class="action"></div>
+	<script>
+var svg = d3.select("div.action")
+	.append("svg")
+	.attr("width",1024)
+	.attr("height",1325);
+
+var test2 = function(){
+	housing.init();
+	d3.json("sample.json",function(err,jsonobj){
+		if(jsonobj){
+			housing.load(jsonobj.floor,svg);
+		}
+	});
+}
+
+d3.select("div.action").on("click",test1);
+test2();
+</script>
+</body>
+
