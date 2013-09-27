@@ -31,15 +31,21 @@
 	<h2>The Test</h2>
 	<div class="action"></div>
 	<script>
-d3.json("sample.json",function(err,jsonobj){
-	if(jsonobj){
-		var svg = d3.select("div.action")
-						.append("svg")
-						.attr("width",1024)
-						.attr("height",1325);
-		housing.load(jsonobj,svg);
-	}
+var svg = d3.select("div.action")
+	.append("svg")
+	.attr("width",1024)
+	.attr("height",1325);
+
+var test1 = function(){
+	d3.json("sample.json",function(err,jsonobj){
+		if(jsonobj){
+			housing.load(jsonobj.floor,svg);
+		}
+	});
 }
+
+d3.select("div.action").on("click",test1);
+test1();
 </script>
 </body>
-	
+
