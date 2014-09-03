@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tooltip Test</title>
-	<meta charset="utf-8"> 
-	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<script src="../js/housing.js" charset="utf-8"></script>
+  <title>Tooltip Test</title>
+  <meta charset="utf-8"> 
+  <script src="/bower_components/d3/d3.min.js" charset="utf-8"></script>
+  <script src="/bower_components/d3-tip/index.js" charset="utf-8"></script>
+  <script src="/js/housing.js" charset="utf-8"></script>
 </head>
 <body>
 	<h1>Test Tooltips</h1>
@@ -13,26 +14,40 @@
 	as well as who has already registered for the room. This test also requires
 	a rollover effect to be implemented on the circles.
 	</p>
+        <h2>The data</h2>
+        <pre class="data">
+        </pre>
 	<aside>Data is from <code class="filename">sample.json</code></aside>
 	<h2>The Test</h2>
 	<div class="action"></div>
 	<script>
+// Select active elements of page
+var pre = d3.select("pre.data")
 var svg = d3.select("div.action")
-	.append("svg")
-	.attr("width",1024)
-	.attr("height",1325);
+    .append("svg")
+    .attr("width",1024)
+    .attr("height",1325);
 
-var test2 = function(){
-	housing.init();
-	d3.json("sample.json",function(err,jsonobj){
-		if(jsonobj){
-			housing.load(jsonobj.floor,svg);
-		}
-	});
+// Display the JSON that is loaded
+d3.text("sample.json",function(err,txt){
+    pre.text(txt);
+});
+
+// Reload the floor.  The floor number is hardcoded for simplicity
+var test1 = function(){
+    d3.json("sample.json",function(err,jsonobj){
+        if(jsonobj){
+            housing.init(svg);
+            housing.load(jsonobj.floors,2,svg);
+        }
+    });
 }
 
+// Clicking anywhere on the test will reload it.
 d3.select("div.action").on("click",test1);
-test2();
+
+// Load the floor
+test1();
 </script>
 </body>
 
