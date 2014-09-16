@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Honors Housing Selection</title>
+  <meta charset="utf-8"> 
+</head>
+<body>
+    <h1>Honors Housing Selection</h1>
+    < p>
+    Eventually, the goal is that students click on the room they want to reserve
+    in order to reserve it.
+    </p>
+    <h2>Selection UI</h2> 
+    <nav id="floornav">
+        <ul></ul>
+    </nav>
+    <div id="selection"></div>
+
+<script src="/bower_components/d3/d3.js" charset="utf-8"></script>
+<script src="/bower_components/d3-tip/index.js" charset="utf-8"></script>
+<script src="/js/housing.js" charset="utf-8"></script>
+<script>
+// Select active elements of page
+// These are regions that will be filled by housing.js
+var svg = d3.select("#selection")
+    .append("svg")
+    .attr("width",1024)
+    .attr("height",1325);
+var nav = d3.select("#floornav ul");
+
+// Define a function that loads the floor. 
+// The initial floor number is hardcoded to 2 for simplicity
+var test1 = function(){
+    d3.json("/spec.json",function(err,jsonobj){
+        if(jsonobj){
+            housing.init(svg,nav,jsonobj.floors);
+            housing.load(jsonobj.floors,2,svg);
+        }
+    });
+}
+
+// Load the floor
+test1();
+</script>
+</body>
+
