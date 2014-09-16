@@ -15,7 +15,7 @@
   <h2>Data to Read</h2>
   <pre class="data">
   </pre>
-  <aside>Data is from <code class="filename">sample.json</code></aside>
+  <aside>Data is from <code class="filename">spec.json</code></aside>
   <h2>The Test</h2>
   <div class="action"></div>
   <script>
@@ -27,13 +27,13 @@ var svg = d3.select("div.action")
     .attr("height",1325);
 
 // Display the JSON that is loaded
-d3.text("sample.json",function(err,txt){
+d3.text("/spec.json",function(err,txt){
     pre.text(txt);
 });
 
 // Reload the floor.  The floor number is hardcoded for simplicity
 var test1 = function(){
-    d3.json("sample.json",function(err,jsonobj){
+    d3.json("/spec.json",function(err,jsonobj){
         if(jsonobj){
             housing.load(jsonobj.floors,2,svg);
         }

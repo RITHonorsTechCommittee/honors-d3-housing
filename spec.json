@@ -1,0 +1,27 @@
+{
+    "username": "abc1234",
+    "auth": "true",
+    "authkey": "12c9f74cd...5e42",
+    "currentRoom": 0,
+    "floors": [
+    {
+        "number": 2,
+        "rooms": [
+            { "number": 2120, "capacity": 3,"occupants": 2, "x": 120, "y": 74 },
+            { "number": 2118, "capacity": 2,"occupants": 0, "x": 205, "y": 74 },
+            { "number": 2114, "capacity": 2,"occupants": 0, "x": 262, "y": 74 },
+            { "number": 2110, "capacity": 2,"occupants": 1, "x": 323, "y": 74 },
+            { "number": 2123, "capacity": 2,"occupants": 0, "x": 146, "y": 216 },
+            { "number": 2119, "capacity": 2,"occupants": 0, "x": 205, "y": 216 },
+            { "number": 2115, "capacity": 2,"occupants": 0, "x": 262, "y": 216 },
+            { "number": 2111, "capacity": 2,"occupants": 2, "x": 323, "y": 216 }
+        ]
+    },
+    {
+        "number": 3,
+        "rooms": [
+            { "number": 3120, "capacity": 2, "occupants": 0, "x": 120, "y": 74 }
+        ]
+    }
+]
+}
