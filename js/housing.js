@@ -50,16 +50,19 @@ var housing = {
      */
     load: function(data,floor,d3svg) {
         // Sets up all the images so that the correct floor will always be visible
-        d3svg.selectAll("image")
-                .data(data)
-            .enter()
-                .append("image")
+        housing.currentFloor = floor;
+        var floorimgs = d3svg.selectAll("image");
+        floorimgs.remove();
+        var floorimgs = d3svg.selectAll("image")
+                .data(data);
+        var enterfloorimgs = floorimgs.enter();
+        enterfloorimgs.append("image")
                 .attr("x",0)
                 .attr("y",0)
                 .attr("width",1024)
                 .attr("height",1325)
-                .attr("xlink:href",function(d){ return "/img/049-"+d.number+".png"; })
-                .attr("visibility",function(d){ if( floor == d.number ){ return "visible"; }else{ return "hidden"; }});
+                .attr("xlink:href",housing.style.imghref)
+                .attr("visibility",housing.style.imgvisibility);
                 
         // Loop through the floors
         for( var i = 0; i < data.length; i += 1 ){
@@ -67,6 +70,7 @@ var housing = {
             if( data[i].number == floor ){
                 // Select all circles in the SVG canvas
                 // and bind them to the rooms on the floor
+                d3svg.selectAll(".circle").remove();
                 var rooms = d3svg.selectAll(".circle")
                     .data(data[i].rooms)
                 // Remove excess circles if needed
@@ -130,6 +134,16 @@ var housing = {
         },
         titleOffset: function(d) {
             return housing.style.r(d) + 10;
+        },
+        imghref: function(d) {
+            return "/img/049-"+d.number+".png";
+        },
+        imgvisibility: function(d){ 
+            if( housing.currentFloor == d.number ) { 
+                return "visible"; 
+            } else { 
+                return "hidden";
+            }
         }
     }
 };
