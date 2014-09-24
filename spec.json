@@ -20,7 +20,7 @@
     {
         "number": 3,
         "rooms": [
-            { "number": 3120, "capacity": 2, "occupants": 0, "x": 120, "y": 74 }
+            { "number": 3120, "capacity": 2, "occupants": 0, "x": 120, "y": 94 }
         ]
     }
 ]

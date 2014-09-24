@@ -22,17 +22,21 @@ var housing = {
         d3svg.call(housing.tooltip);
         // Create navigation
         if( nav && data && data.length ) {
-            var li = nav.selectAll("li")
-                .data(data);
-            li.exit().remove()
-            li.enter().append("li")
-                .append("a")
-                    .attr("href","#")
-                    .text(function(d){ return "Floor "+d.number; })
-                    .on("click", function(d){ 
-                        housing.load(data,d.number,d3svg); 
-                        return false;
-                    });
+            // In case it has been initialized before,
+            // get rid of old buttons
+            nav.selectAll("li").remove();
+            // Add new buttons based on the data
+            nav.selectAll("li")
+                    .data(data)
+                .enter()
+                    .append("li")
+                    .append("a") // Each button is an <a> inside a <li>
+                        .attr("href","#")
+                        .text(function(d){ return "Floor "+d.number; })
+                        .on("click", function(d){ 
+                            housing.load(data,d.number,d3svg); 
+                            return false;
+                        });
         }
     },
 
@@ -50,48 +54,66 @@ var housing = {
      */
     load: function(data,floor,d3svg) {
         // Sets up all the images so that the correct floor will always be visible
-        d3svg.selectAll("image")
-                .data(data)
-            .enter()
-                .append("image")
+        housing.currentFloor = floor;
+        
+        // Get floor images
+        var floorimgs = d3svg.selectAll("image");
+        // update data
+        floorimgs.data(data)
+             // set visibility base on new data
+            .attr("visibility",housing.style.imgvisibility)
+        
+            // add new images if necessary and style them appropriately
+	    .enter()
+            .append("image")
                 .attr("x",0)
                 .attr("y",0)
                 .attr("width",1024)
                 .attr("height",1325)
-                .attr("xlink:href",function(d){ return "/img/049-"+d.number+".png"; })
-                .attr("visibility",function(d){ if( floor == d.number ){ return "visible"; }else{ return "hidden"; }});
+                .attr("xlink:href",housing.style.imghref)
+                .attr("visibility",housing.style.imgvisibility);
                 
-        // Loop through the floors
+        // It is simplest just to remove all circles to make sure they update correctly
+        d3svg.selectAll(".circle").remove();
+
+        // Loop through the floors to find the current floor
         for( var i = 0; i < data.length; i += 1 ){
-            // Find the floor we are looking for
             if( data[i].number == floor ){
-                // Select all circles in the SVG canvas
+                // Select all groups with class circle in the SVG canvas
                 // and bind them to the rooms on the floor
                 var rooms = d3svg.selectAll(".circle")
-                    .data(data[i].rooms)
-                // Remove excess circles if needed
-                rooms.exit().remove();
-                // Add more circles if needed
+                    .data(data[i].rooms);
                 
+                // Each room gets a group (an SVG <g> element) to hold the
+                // occupancy indicator and room number
                 var group = rooms.enter().append("g")
                     .attr("transform",housing.style.transform)
                     .attr("class","circle");
+
+                // Allow for tooltips if defined.
                 if(housing.tooltip){
                     group.on("mouseover",housing.tooltip.show)
                         .on("mouseout",housing.tooltip.hide);
                 }
+                
+                // Add the base layer of the occupancy indicator
                 group.append("circle")
                     .attr("r",housing.style.r)
                     .attr("fill",housing.style.color.empty)
                     .attr("stroke","black");
+
+                // Create a SVG path specification for an arc that indicates occupancy
                 var arc1 = d3.svg.arc()
                     .innerRadius(0)
                     .outerRadius(housing.style.r)
                     .startAngle(0)
                     .endAngle(housing.style.endAngle);
+                // Add the arc path to the group
                 group.append("path")
                     .attr("d", arc1)
                     .attr("fill",housing.style.color.partial);
+
+                // Add the room number (an SVG <text> element)
                 group.append("text")
                     .text(housing.style.title)
                     .attr("text-anchor","middle")
@@ -130,6 +152,16 @@ var housing = {
         },
         titleOffset: function(d) {
             return housing.style.r(d) + 10;
+        },
+        imghref: function(d) {
+            return "/img/049-"+d.number+".png";
+        },
+        imgvisibility: function(d){ 
+            if( housing.currentFloor == d.number ) { 
+                return "visible"; 
+            } else { 
+                return "hidden";
+            }
         }
     }
 };
