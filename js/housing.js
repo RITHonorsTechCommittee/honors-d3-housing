@@ -22,17 +22,20 @@ var housing = {
         d3svg.call(housing.tooltip);
         // Create navigation
         if( nav && data && data.length ) {
-            var li = nav.selectAll("li")
-                .data(data);
-            li.exit().remove()
-            li.enter().append("li")
-                .append("a")
-                    .attr("href","#")
-                    .text(function(d){ return "Floor "+d.number; })
-                    .on("click", function(d){ 
-                        housing.load(data,d.number,d3svg); 
-                        return false;
-                    });
+            // In case it has been initialized before,
+            // get rid of old buttons
+            nav.selectAll("li").remove();
+            // Add new buttons based on the data
+            nav.selectAll("li")
+                .data(data)
+                    .append("li")
+                    .append("a") // Each button is an <a> inside a <li>
+                        .attr("href","#")
+                        .text(function(d){ return "Floor "+d.number; })
+                        .on("click", function(d){ 
+                            housing.load(data,d.number,d3svg); 
+                            return false;
+                        });
         }
     },
 
