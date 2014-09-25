@@ -3,19 +3,98 @@
 <head>
   <title>Honors Housing Selection</title>
   <meta charset="utf-8"> 
+  <link rel=stylesheet href="/bower_components/foundation/css/normalize.css">
+  <link rel=stylesheet href="/bower_components/foundation/css/foundation.css">
+  <link rel=stylesheet href="/css/fonts/foundation-icons.css">
+  <link rel=stylesheet href="/css/app.css">
 </head>
 <body>
-    <h1>Honors Housing Selection</h1>
-    <p>
-    Eventually, the goal is that students click on the room they want to reserve
-    in order to reserve it.
-    </p>
-    <h2>Selection UI</h2> 
-    <nav id="floornav">
-        <ul></ul>
-    </nav>
-    <div id="selection"></div>
+<!--  BEGIN NAVIGATION STUFF  -->
+  <!-- BEGIN NAV TOP BAR -->
+  <nav class="top-bar" data-topbar>
+      <ul class="title-area">
+          <li class="name">
+              <h1>
+                  <a title="RIT Home" href="https://www.rit.edu/"><span class="ritabbr"><span class="ritlong show-for-large-up"></span></span></a>
+              </h1>
+          </li>
+          <li class="toggle-topbar"><a href="#"><span>Search</span></a></li>
+      </ul>
 
+      <section class="top-bar-section">
+          <ul class="right">
+              <li class="show-for-medium-up ritsearch">
+                  <form method="get" action="http://www.rit.edu/search/">
+                  <div class="row collapse">
+                      <div class="large-10 small-9 columns">
+                          <input type="text" name="q" placeholder="Search RIT">
+                      </div>
+                      <div class="large-2 small-3 columns">
+                          <button class="search-button expand" title="Search RIT">&nbsp;<i class="fi-magnifying-glass"></i></button>
+                      </div>
+                  </div>
+                  </form>
+              </li>
+              <li>
+                  <a class="right-off-canvas-toggle menu-icon"><span></span></a>
+              </li>
+          </ul>
+      </section>
+  </nav>
+  <!-- END NAV TOP BAR -->
+  <!-- BEGIN OFF CANVAS MENU -->
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap">
+    <aside class="right-off-canvas-menu">
+        <ul class="off-canvas-list">
+            <li><label>RIT</label></li>
+            <li><a href="https://www.rit.edu/">RIT Home</a></li>
+            <li><a href="https://www.rit.edu/directories.html">RIT Directories</a></li>
+            <li class="hide-for-medium-up">
+                <form method="get" action="http://www.rit.edu/search/" class="ritsearch">
+                <div class="row collapse">
+                    <div class="large-10 small-9 columns">
+                        <input type="text" name="q" placeholder="Search RIT">
+                    </div>
+                    <div class="large-2 small-3 columns">
+                        <button class="search-button expand" title="Search RIT">&nbsp;<i class="fi-magnifying-glass"></i></button>
+                    </div>
+                </div>
+                </form>
+            </li>
+            <li><label>Honors</label></li>
+            <li><a href="http://honors.rit.edu/">Home</a></li>
+            <li><a href="http://honors.rit.edu/committees/">Built by Tech Committee</a></li>
+            <li><a href="https://github.com/RITHonorsTechCommittee/honors-d3-housing" target="_blank">Code on GitHub</a></li>
+        </ul>
+    </aside>
+  <!-- END OFF CANVAS MENU -->
+<!--  END NAVIGATION STUFF  -->
+
+<!-- BEGIN HOUSING SELECTION PART -->
+    <div class="row">
+      <section>
+        <h1>Honors Housing Selection</h1>
+        <p>
+        Eventually, the goal is that students click on the room they want to reserve
+        in order to reserve it.
+        </p>
+      </section>
+      <section>
+        <h2>Selection UI</h2> 
+        <nav id="floornav">
+            <ul></ul>
+        </nav>
+        <div id="selection"></div>
+      </section>
+    </div>
+<!-- END HOUSING SELECTION PART -->
+  </div>
+</div>
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/bower_components/foundation/js/foundation/foundation.topbar.js"></script>
+<script src="/bower_components/foundation/js/foundation/foundation.offcanvas.js"></script>
 <script src="/bower_components/d3/d3.js" charset="utf-8"></script>
 <script src="/bower_components/d3-tip/index.js" charset="utf-8"></script>
 <script src="/js/housing.js" charset="utf-8"></script>
@@ -39,6 +118,13 @@ var test1 = function(){
     });
 }
 
+// Load foundation components
+$(document).foundation({
+    offcanvas: {
+        open_method: 'overlap',
+        close_on_click: true
+    }
+});
 // Load the floor
 test1();
 </script>
