@@ -14,12 +14,19 @@ var housing = {
      *
      * @param d3svg An SVG element in which the data will be drawn.
      */
-    init: function(d3svg,nav,data) {
+    init: function(d3svg,nav,data,enableTooltip) {
         // Set up fancy tooltips for the rooms
-        housing.tooltip = d3.tip()
-            .attr("class","tooltip")
-            .html(housing.style.tooltip);
-        d3svg.call(housing.tooltip);
+        if(typeof enableTooltip === "undefined"){
+			// Default is not enabled
+			enableTooltip = false;
+		}
+		if(enableTooltip){
+			housing.tooltip = d3.tip()
+				.attr("class","tooltip")
+				.html(housing.style.tooltip);
+			d3svg.call(housing.tooltip);
+		}
+		
         // Create navigation
         if( nav && data && data.length ) {
             // In case it has been initialized before,
