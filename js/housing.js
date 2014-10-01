@@ -75,8 +75,8 @@ var housing = {
             .append("image")
                 .attr("x",0)
                 .attr("y",0)
-                .attr("width",1024)
-                .attr("height",1325)
+                .attr("width",768)
+                .attr("height",609)
                 .attr("xlink:href",housing.style.imghref)
                 .attr("visibility",housing.style.imgvisibility);
                 
