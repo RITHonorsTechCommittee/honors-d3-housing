@@ -39,6 +39,7 @@ var housing = {
                     .append("li")
                     .append("a") // Each button is an <a> inside a <li>
                         .attr("href","#")
+						.classed("button",true)
                         .text(function(d){ return "Floor "+d.number; })
                         .on("click", function(d){ 
                             housing.load(data,d.number,d3svg); 
