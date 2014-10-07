@@ -5,7 +5,7 @@
     "currentRoom": 0,
     "floors": [
     {
-        "number": 2,
+        "number": "2a",
         "rooms": [
             { "number": 2120, "capacity": 3,"occupants": 2, "x": 120, "y": 74 },
             { "number": 2118, "capacity": 2,"occupants": 0, "x": 205, "y": 74 },
@@ -18,9 +18,19 @@
         ]
     },
     {
-        "number": 3,
+        "number": "2b",
+        "rooms": [
+        ]
+    },
+    {
+        "number": "3a",
         "rooms": [
             { "number": 3120, "capacity": 2, "occupants": 0, "x": 120, "y": 94 }
+        ]
+    },
+    {
+        "number": "3b",
+        "rooms": [
         ]
     },
     {
@@ -44,6 +54,11 @@
             { "number": 4049, "capacity": 2, "occupants": 0, "x": 301, "y": 178 },
             { "number": 4053, "capacity": 2, "occupants": 0, "x": 301, "y": 118 },
             { "number": 4057, "capacity": 2, "occupants": 0, "x": 301, "y":  55 }
+        ]
+    },
+    {
+        "number": "5b",
+        "rooms": [
         ]
     }
 ]
