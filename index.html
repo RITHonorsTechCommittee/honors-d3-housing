@@ -113,7 +113,7 @@ var test1 = function(){
     d3.json("/spec.json",function(err,jsonobj){
         if(jsonobj){
             housing.init(svg,nav,jsonobj.floors);
-            housing.load(jsonobj.floors,2,svg);
+            housing.load(jsonobj.floors,"4b",svg);
         }
     });
 }
