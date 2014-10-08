@@ -63,6 +63,7 @@ var housing = {
     load: function(data,floor,d3svg) {
         // Sets up all the images so that the correct floor will always be visible
         housing.currentFloor = floor;
+        housing.currentData = data;
         
         // Get floor images
         var floorimgs = d3svg.selectAll("image");
@@ -108,7 +109,16 @@ var housing = {
                 group.append("circle")
                     .attr("r",housing.style.r)
                     .attr("fill",housing.style.color.empty)
-                    .attr("stroke","black");
+                    .attr("stroke","black")
+                    .on("click",function(d,j){
+                        //TODO: this is just for demo purposes
+                        for( var k = 0; k < data.length; k += 1 ) {
+                            if( data[k].number == floor ) {
+                                data[k].rooms[j].occupants = d.occupants + 1;
+                                housing.load(data,floor,d3svg);
+                            }
+                        }
+                    });
 
                 // Create a SVG path specification for an arc that indicates occupancy
                 var arc1 = d3.svg.arc()
