@@ -97,7 +97,16 @@ var housing = {
                 // occupancy indicator and room number
                 var group = rooms.enter().append("g")
                     .attr("transform",housing.style.transform)
-                    .attr("class","circle");
+                    .attr("class","circle")
+                    .on("click",function(d,j){
+                        //TODO: this is just for demo purposes
+                        for( var k = 0; k < data.length; k += 1 ) {
+                            if( data[k].number == floor ) {
+                                data[k].rooms[j].occupants = d.occupants + 1;
+                                housing.load(data,floor,d3svg);
+                            }
+                        }
+                    });
 
                 // Allow for tooltips if defined.
                 if(housing.tooltip){
@@ -109,16 +118,7 @@ var housing = {
                 group.append("circle")
                     .attr("r",housing.style.r)
                     .attr("fill",housing.style.color.empty)
-                    .attr("stroke","black")
-                    .on("click",function(d,j){
-                        //TODO: this is just for demo purposes
-                        for( var k = 0; k < data.length; k += 1 ) {
-                            if( data[k].number == floor ) {
-                                data[k].rooms[j].occupants = d.occupants + 1;
-                                housing.load(data,floor,d3svg);
-                            }
-                        }
-                    });
+                    .attr("stroke","black");
 
                 // Create a SVG path specification for an arc that indicates occupancy
                 var arc1 = d3.svg.arc()
