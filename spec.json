@@ -74,7 +74,7 @@
             { "number": 5045, "capacity": 2, "occupants": 0, "x": 310, "y": 244 },
             { "number": 5048, "capacity": 2, "occupants": 0, "x": 450, "y": 182 },
             { "number": 5049, "capacity": 2, "occupants": 0, "x": 310, "y": 182 },
-            { "number": 5051, "capacity": 3, "occupants": 0, "x": 310, "y": 90 },
+            { "number": 5051, "capacity": 3, "occupants": 0, "x": 310, "y":  90 },
             { "number": 5052, "capacity": 2, "occupants": 0, "x": 450, "y": 120 }
         ]
     }
