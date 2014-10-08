@@ -59,6 +59,23 @@
     {
         "number": "5b",
         "rooms": [
+            { "number": 5004, "capacity": 2, "occupants": 0, "x": 700, "y": 430 },
+            { "number": 5005, "capacity": 2, "occupants": 0, "x": 700, "y": 540 },
+            { "number": 5010, "capacity": 2, "occupants": 0, "x": 620, "y": 430 },
+            { "number": 5016, "capacity": 2, "occupants": 0, "x": 540, "y": 430 },
+            { "number": 5021, "capacity": 1, "occupants": 0, "x": 473, "y": 540 },
+            { "number": 5023, "capacity": 1, "occupants": 0, "x": 417, "y": 540 },
+            { "number": 5027, "capacity": 1, "occupants": 0, "x": 363, "y": 540 },
+            { "number": 5036, "capacity": 2, "occupants": 0, "x": 450, "y": 367 },
+            { "number": 5037, "capacity": 2, "occupants": 0, "x": 310, "y": 367 },
+            { "number": 5040, "capacity": 2, "occupants": 0, "x": 450, "y": 306 },
+            { "number": 5041, "capacity": 2, "occupants": 0, "x": 310, "y": 306 },
+            { "number": 5044, "capacity": 2, "occupants": 0, "x": 450, "y": 244 },
+            { "number": 5045, "capacity": 2, "occupants": 0, "x": 310, "y": 244 },
+            { "number": 5048, "capacity": 2, "occupants": 0, "x": 450, "y": 182 },
+            { "number": 5049, "capacity": 2, "occupants": 0, "x": 310, "y": 182 },
+            { "number": 5051, "capacity": 3, "occupants": 0, "x": 310, "y":  90 },
+            { "number": 5052, "capacity": 2, "occupants": 0, "x": 450, "y": 120 }
         ]
     }
 ]
