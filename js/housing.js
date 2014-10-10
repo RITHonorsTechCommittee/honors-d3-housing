@@ -39,10 +39,12 @@ var housing = {
                     .append("li")
                     .append("a") // Each button is an <a> inside a <li>
                         .attr("href","#")
+						.attr("name",function(d){ return "floor"+d.number; })
 						.classed("button",true)
+						.classed("disabled",true)
                         .text(function(d){ return "Floor "+d.number; })
                         .on("click", function(d){ 
-                            housing.load(data,d.number,d3svg); 
+							housing.load(data,d.number,d3svg);
                             d3.event.preventDefault();
                         });
         }
@@ -61,7 +63,11 @@ var housing = {
      * @param d3svg An SVG element in which to draw the data.
      */
     load: function(data,floor,d3svg) {
-        // Sets up all the images so that the correct floor will always be visible
+		// Disable the button for the current floor
+		d3.selectAll("a.disabled").classed("disabled",false);
+		d3.select("#floornav").select("ul").selectAll("li").select("[name=floor"+floor+"]").classed("disabled",true);
+		
+		// Sets up all the images so that the correct floor will always be visible
         housing.currentFloor = floor;
         
         // Get floor images
