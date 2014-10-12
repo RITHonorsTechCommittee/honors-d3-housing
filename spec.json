@@ -7,19 +7,49 @@
     {
         "number": "2a",
         "rooms": [
-            { "number": 2120, "capacity": 3,"occupants": 2, "x": 69, "y": 511 },
+		    { "number": 2062, "capacity": 1,"occupants": 0, "x": 741, "y": 54 },
+			{ "number": 2063, "capacity": 2,"occupants": 2, "x": 727, "y": 174 },
+			{ "number": 2064, "capacity": 1,"occupants": 0, "x": 687, "y": 54 },
+			{ "number": 2066, "capacity": 1,"occupants": 0, "x": 631, "y": 54 },
+			{ "number": 2067, "capacity": 2,"occupants": 2, "x": 648, "y": 174 },
+			{ "number": 2070, "capacity": 2,"occupants": 2, "x": 564, "y": 54 },
+			{ "number": 2071, "capacity": 2,"occupants": 2, "x": 564, "y": 174 },
+			{ "number": 2074, "capacity": 2,"occupants": 2, "x": 480, "y": 54 },
+			{ "number": 2075, "capacity": 2,"occupants": 2, "x": 480, "y": 174 },
+			{ "number": 2078, "capacity": 2,"occupants": 2, "x": 395, "y": 54 },
+			{ "number": 2079, "capacity": 2,"occupants": 2, "x": 395, "y": 174 },
+			{ "number": 2083, "capacity": 2,"occupants": 2, "x": 313, "y": 174 },
+			{ "number": 2086, "capacity": 2,"occupants": 2, "x": 228, "y": 54 },
+			{ "number": 2090, "capacity": 2,"occupants": 2, "x": 146, "y": 54 },
+			{ "number": 2094, "capacity": 2,"occupants": 2, "x": 60, "y": 54 },
+			{ "number": 2106, "capacity": 2,"occupants": 2, "x": 69, "y": 240 },
+			{ "number": 2110, "capacity": 2,"occupants": 1, "x": 69, "y": 301 },
+			{ "number": 2111, "capacity": 2,"occupants": 2, "x": 226, "y": 301 },
+			{ "number": 2114, "capacity": 2,"occupants": 0, "x": 69, "y": 361 },
+			{ "number": 2115, "capacity": 2,"occupants": 0, "x": 226, "y": 361 },
             { "number": 2118, "capacity": 2,"occupants": 0, "x": 69, "y": 424 },
-            { "number": 2114, "capacity": 2,"occupants": 0, "x": 69, "y": 361 },
-            { "number": 2110, "capacity": 2,"occupants": 1, "x": 69, "y": 301 },
-            { "number": 2123, "capacity": 2,"occupants": 0, "x": 226, "y": 481 },
-            { "number": 2119, "capacity": 2,"occupants": 0, "x": 226, "y": 423 },
-            { "number": 2115, "capacity": 2,"occupants": 0, "x": 226, "y": 360 },
-            { "number": 2111, "capacity": 2,"occupants": 2, "x": 226, "y": 300 }
+            { "number": 2119, "capacity": 2,"occupants": 0, "x": 226, "y": 424 },
+			{ "number": 2120, "capacity": 3,"occupants": 2, "x": 69, "y": 511 },
+			{ "number": 2123, "capacity": 2,"occupants": 0, "x": 226, "y": 481 }
         ]
     },
     {
         "number": "2b",
         "rooms": [
+			{ "number": 2008, "capacity": 2, "occupants": 0, "x": 550, "y": 426 },
+			{ "number": 2017, "capacity": 1, "occupants": 0, "x": 480, "y": 546 },
+			{ "number": 2021, "capacity": 1, "occupants": 0, "x": 424, "y": 546 },
+			{ "number": 2023, "capacity": 1, "occupants": 0, "x": 369, "y": 546 },
+			{ "number": 2027, "capacity": 2, "occupants": 0, "x": 301, "y": 546 },
+			{ "number": 2036, "capacity": 2, "occupants": 0, "x": 375, "y": 360 },
+			{ "number": 2037, "capacity": 2, "occupants": 0, "x": 228, "y": 360 },
+			{ "number": 2040, "capacity": 2, "occupants": 0, "x": 375, "y": 294 },
+			{ "number": 2041, "capacity": 2, "occupants": 0, "x": 228, "y": 294 },
+			{ "number": 2044, "capacity": 2, "occupants": 0, "x": 375, "y": 231 },
+			{ "number": 2045, "capacity": 2, "occupants": 0, "x": 228, "y": 231 },
+			{ "number": 2048, "capacity": 2, "occupants": 0, "x": 375, "y": 168 },
+			{ "number": 2049, "capacity": 2, "occupants": 0, "x": 228, "y": 168 },
+			{ "number": 2051, "capacity": 4, "occupants": 0, "x": 228, "y": 73 }
         ]
     },
     {
