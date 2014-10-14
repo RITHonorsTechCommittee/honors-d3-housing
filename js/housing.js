@@ -69,6 +69,7 @@ var housing = {
 		
 		// Sets up all the images so that the correct floor will always be visible
         housing.currentFloor = floor;
+        housing.currentData = data;
         
         // Get floor images
         var floorimgs = d3svg.selectAll("image");
@@ -102,7 +103,16 @@ var housing = {
                 // occupancy indicator and room number
                 var group = rooms.enter().append("g")
                     .attr("transform",housing.style.transform)
-                    .attr("class","circle");
+                    .attr("class","circle")
+                    .on("click",function(d,j){
+                        //TODO: this is just for demo purposes
+                        for( var k = 0; k < data.length; k += 1 ) {
+                            if( data[k].number == floor ) {
+                                data[k].rooms[j].occupants = d.occupants + 1;
+                                housing.load(data,floor,d3svg);
+                            }
+                        }
+                    });
 
                 // Allow for tooltips if defined.
                 if(housing.tooltip){
