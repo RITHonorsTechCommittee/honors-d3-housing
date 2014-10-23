@@ -112,13 +112,29 @@ var housing = {
                                 housing.load(data,floor,d3svg);
                             }
                         }
-                    });
+                    })
+					.on("mouseover", function(d) {
+						d3.select(this).select("rect").attr("opacity", 0.2);
+					})
+					.on("mouseout", function(d) {
+						d3.select(this).select("rect").attr("opacity", 0);
+					});
+				
 
                 // Allow for tooltips if defined.
                 if(housing.tooltip){
                     group.on("mouseover",housing.tooltip.show)
                         .on("mouseout",housing.tooltip.hide);
                 }
+
+				// Shade room on mouseover
+				group.append("rect")
+					.attr("x", housing.style.bgxOffset)
+					.attr("y", housing.style.bgyOffset)
+					.attr("width", housing.style.bgWidth)
+					.attr("height", housing.style.bgHeight)
+					.attr("fill", "black")
+					.attr("opacity", 0)
                 
                 // Add the base layer of the occupancy indicator
                 group.append("circle")
@@ -186,7 +202,19 @@ var housing = {
             } else { 
                 return "hidden";
             }
-        }
+        },
+		bgxOffset: function(d) {
+			return d.bgx;
+		},
+		bgyOffset: function(d) {
+			return d.bgy;
+		},
+		bgWidth: function(d) {
+			return d.bgw;
+		},
+		bgHeight: function(d) {
+			return d.bgh;
+		}
     }
 };
 // Allow for statements of the form housing.style.color.empty
