@@ -147,3 +147,30 @@ li.ritsearch {
     float: right; }
   .posts article:nth-child(even) > div {
     float: left; } }
+
+/* Styles for housing selection */
+
+.color-empty {
+  fill: #00FF00; }
+
+.color-partial {
+  fill: #0000FF; }
+
+.color-full {
+  fill: #CC0000; }
+
+.circle:hover .color-empty {
+  fill: #00DD00; }
+
+.circle:hover .color-partial {
+  fill: #0000CC; }
+
+.circle:hover .color-full {
+  fill: #AA0000; }
+
+.circle:hover > * {
+  -webkit-transform: translate(-0.2rem, -0.2rem);
+  -moz-transform: translate(-0.2rem, -0.2rem);
+  -ms-transform: translate(-0.2rem, -0.2rem);
+  -o-transform: translate(-0.2rem, -0.2rem);
+  transform: translate(-0.2rem, -0.2rem); }

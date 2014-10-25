@@ -123,7 +123,7 @@ var housing = {
                 // Add the base layer of the occupancy indicator
                 group.append("circle")
                     .attr("r",housing.style.r)
-                    .attr("fill",housing.style.color.empty)
+                    .attr("class",housing.style.color.empty)
                     .attr("stroke","black");
 
                 // Create a SVG path specification for an arc that indicates occupancy
@@ -135,7 +135,7 @@ var housing = {
                 // Add the arc path to the group
                 group.append("path")
                     .attr("d", arc1)
-                    .attr("fill",housing.style.color.partial);
+                    .attr("class",housing.style.color);
 
                 // Add the room number (an SVG <text> element)
                 group.append("text")
@@ -190,7 +190,7 @@ var housing = {
     }
 };
 // Allow for statements of the form housing.style.color.empty
-housing.style.color.empty = "#00ff00";
-housing.style.color.partial = "#0000ff";
-housing.style.color.full = "#ff0000";
+housing.style.color.empty = "color-empty";
+housing.style.color.partial = "color-partial";
+housing.style.color.full = "color-full";
 
