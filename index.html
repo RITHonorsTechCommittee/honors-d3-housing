@@ -75,13 +75,17 @@
     <div class="row">
       <section>
         <h1>Honors Housing Selection</h1>
-		<h3>Pick a Floor and Click a Room To Reserve It</h3>
+        <h3>Pick a Floor and Click a Room To Reserve It</h3>
       </section>
       <section>
-          <nav id="floornav">
-              <ul class="button-group"></ul>
+          <nav id="floornav" class="button-bar">
+              <ul class="button-group floors"></ul>
+              <ul class="button-group">
+                  <li>
+                      <a href="#" id="clearreserve" class="button small alert round">Clear Reservation</a>
+                  </li>
+              </ul>
           </nav>
-		  <a href="#" id="clearreserve" class="button small alert round">Clear Reservation</a>
         <div id="selection"></div>
       </section>
     </div>
@@ -95,24 +99,13 @@
 <script src="/bower_components/d3/d3.js" charset="utf-8"></script>
 <script src="/bower_components/d3-tip/index.js" charset="utf-8"></script>
 <script src="/js/housing.js" charset="utf-8"></script>
+<script src="/js/auth.js" charset="utf-8"></script>
+<script src="/js/client.js" charset="utf-8"></script>
+<script src="/js/app.js" charset="utf-8"></script>
 <script>
-// Select active elements of page
-// These are regions that will be filled by housing.js
-var svg = d3.select("#selection")
-    .append("svg")
-    .attr("width",768)
-    .attr("height",609);
-var nav = d3.select("#floornav ul");
-
-// Define a function that loads the floor. 
-// The initial floor number is hardcoded to 2 for simplicity
-var test1 = function(){
-    d3.json("/spec.json",function(err,jsonobj){
-        if(jsonobj){
-            housing.init(svg,nav,jsonobj.floors);
-            housing.load(jsonobj.floors,"4b",svg);
-        }
-    });
+// Google API callbacks don't work with namespaces
+function gapiCallback() {
+    housing.auth.init();
 }
 
 // Load foundation components
@@ -123,7 +116,12 @@ $(document).foundation({
     }
 });
 // Load the floor
-test1();
+if(housing.auth){
+    // do nothing, google apis callback will start app
+}else{
+    housing.app(true);
+}
 </script>
+<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
 </body>
 
