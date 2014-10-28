@@ -1,6 +1,6 @@
 {
   "name": "honors-d3-housing",
-  "version": "0.2.1-SNAPSHOT",
+  "version": "0.3.0-SNAPSHOT",
   "homepage": "https://github.com/regdoug/honors-d3-housing",
   "authors": [
     "regdoug <pierce.reginald@gmail.com>"
@@ -13,7 +13,10 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "css",
+    "js",
+    "img"
   ],
   "dependencies": {
     "d3": "~3.4.11",
