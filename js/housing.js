@@ -17,16 +17,16 @@ var housing = {
     init: function(d3svg,nav,data,enableTooltip) {
         // Set up fancy tooltips for the rooms
         if(typeof enableTooltip === "undefined"){
-			// Default is not enabled
-			enableTooltip = false;
-		}
-		if(enableTooltip){
-			housing.tooltip = d3.tip()
-				.attr("class","tooltip")
-				.html(housing.style.tooltip);
-			d3svg.call(housing.tooltip);
-		}
-		
+            // Default is not enabled
+            enableTooltip = false;
+        }
+        if(enableTooltip){
+            housing.tooltip = d3.tip()
+                .attr("class","tooltip")
+                .html(housing.style.tooltip);
+            d3svg.call(housing.tooltip);
+        }
+        
         // Create navigation
         if( nav && data && data.length ) {
             // In case it has been initialized before,
@@ -39,12 +39,12 @@ var housing = {
                     .append("li")
                     .append("a") // Each button is an <a> inside a <li>
                         .attr("href","#")
-						.attr("name",function(d){ return "floor"+d.number; })
-						.classed("button",true)
-						.classed("disabled",true)
+                        .attr("name",function(d){ return "floor"+d.number; })
+                        .classed("button",true)
+                        .classed("disabled",true)
                         .text(function(d){ return "Floor "+d.number; })
                         .on("click", function(d){ 
-							housing.load(data,d.number,d3svg);
+                            housing.load(data,d.number,d3svg);
                             d3.event.preventDefault();
                         });
         }
@@ -58,16 +58,16 @@ var housing = {
      * data on the provided d3.js SVG element.
      *
      * @param data The JSON.  The format should follow from
-     * 	/tests/sample.json
+     *     /tests/sample.json
      * @param floor The floor to render
      * @param d3svg An SVG element in which to draw the data.
      */
     load: function(data,floor,d3svg) {
-		// Disable the button for the current floor
-		d3.selectAll("a.disabled").classed("disabled",false);
-		d3.select("#floornav").select("ul").selectAll("li").select("[name=floor"+floor+"]").classed("disabled",true);
-		
-		// Sets up all the images so that the correct floor will always be visible
+        // Disable the button for the current floor
+        d3.selectAll("a.disabled").classed("disabled",false);
+        d3.select("#floornav").select("ul").selectAll("li").select("[name=floor"+floor+"]").classed("disabled",true);
+        
+        // Sets up all the images so that the correct floor will always be visible
         housing.currentFloor = floor;
         housing.currentData = data;
         
@@ -79,7 +79,7 @@ var housing = {
             .attr("visibility",housing.style.imgvisibility)
         
             // add new images if necessary and style them appropriately
-	    .enter()
+        .enter()
             .append("image")
                 .attr("x",0)
                 .attr("y",0)
@@ -112,13 +112,29 @@ var housing = {
                                 housing.load(data,floor,d3svg);
                             }
                         }
+                    })
+                    .on("mouseover", function(d) {
+                        d3.select(this).select("rect").attr("opacity", 0.2);
+                    })
+                    .on("mouseout", function(d) {
+                        d3.select(this).select("rect").attr("opacity", 0);
                     });
+                
 
                 // Allow for tooltips if defined.
                 if(housing.tooltip){
                     group.on("mouseover",housing.tooltip.show)
                         .on("mouseout",housing.tooltip.hide);
                 }
+
+                // Shade room on mouseover
+                group.append("rect")
+                    .attr("x", housing.style.bgxOffset)
+                    .attr("y", housing.style.bgyOffset)
+                    .attr("width", housing.style.bgWidth)
+                    .attr("height", housing.style.bgHeight)
+                    .attr("fill", "black")
+                    .attr("opacity", 0)
                 
                 // Add the base layer of the occupancy indicator
                 group.append("circle")
@@ -186,6 +202,18 @@ var housing = {
             } else { 
                 return "hidden";
             }
+        },
+        bgxOffset: function(d) {
+            return d.bgx;
+        },
+        bgyOffset: function(d) {
+            return d.bgy;
+        },
+        bgWidth: function(d) {
+            return d.bgw;
+        },
+        bgHeight: function(d) {
+            return d.bgh;
         }
     }
 };
