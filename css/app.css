@@ -168,7 +168,9 @@ li.ritsearch {
 .circle:hover .color-full {
   fill: #AA0000; }
 
+/*
 .circle > *{
   transform: translate(0,0); }
 .circle:hover > * {
   transform: translate(-0.2rem, -0.2rem); }
+*/
