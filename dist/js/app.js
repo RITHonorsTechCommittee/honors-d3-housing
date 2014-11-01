@@ -237,11 +237,20 @@ housing.load = function(data,floor,d3svg) {
                 group.on("mouseover",housing.tooltip.show)
                     .on("mouseout",housing.tooltip.hide);
             }
+
+            // Shade room on mouseover
+            group.append("rect")
+                .attr("x", housing.style.bgxOffset)
+                .attr("y", housing.style.bgyOffset)
+                .attr("width", housing.style.bgWidth)
+                .attr("height", housing.style.bgHeight)
+                .attr("fill", "black")
+                .attr("opacity", 0)
             
             // Add the base layer of the occupancy indicator
             group.append("circle")
                 .attr("r",housing.style.r)
-                .attr("fill",housing.style.color.empty)
+                .attr("class",housing.style.color.empty)
                 .attr("stroke","black");
 
             // Create a SVG path specification for an arc that indicates occupancy
@@ -253,7 +262,7 @@ housing.load = function(data,floor,d3svg) {
             // Add the arc path to the group
             group.append("path")
                 .attr("d", arc1)
-                .attr("fill",housing.style.color.partial);
+                .attr("class",housing.style.color);
 
             // Add the room number (an SVG <text> element)
             group.append("text")
@@ -304,10 +313,22 @@ housing.style = {
         } else { 
             return "hidden";
         }
+    },
+    bgxOffset: function(d) {
+        return d.bgx;
+    },
+    bgyOffset: function(d) {
+        return d.bgy;
+    },
+    bgWidth: function(d) {
+        return d.bgw;
+    },
+    bgHeight: function(d) {
+        return d.bgh;
     }
 };
 // Allow for statements of the form housing.style.color.empty
-housing.style.color.empty = "#00ff00";
-housing.style.color.partial = "#0000ff";
-housing.style.color.full = "#ff0000";
+housing.style.color.empty = "color-empty";
+housing.style.color.partial = "color-partial";
+housing.style.color.full = "color-full";
 
