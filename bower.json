@@ -15,9 +15,9 @@
     "bower_components",
     "test",
     "tests",
-    "css",
-    "js",
-    "img",
+    "/css",
+    "/js",
+    "/img",
     "/*.*"
   ],
   "devDependencies": {
