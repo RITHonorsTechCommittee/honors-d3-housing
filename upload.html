@@ -64,13 +64,10 @@ housing.upload.createRooms = function() {
             "capacity": r.capacity,
             "floor":f.number
           }).then(function(resp){
-            d3.select("body").append("pre").text(resp.body);
+            // Rooms have failed to show up in the
+            // rooms list if not updated first
             gapi.client.housing.housing.updateRoom({
               "number": r.number,
-              "x": r.x,
-              "y": r.y,
-              "capacity": r.capacity,
-              "floor":f.number
             }).then(function(resp){
               d3.select("body").append("pre").text(resp.body);
             },function(resp){
@@ -78,8 +75,19 @@ housing.upload.createRooms = function() {
               d3.select("body").append("pre").text(errmsg+"\n"+resp.body);
             });
           },function(resp){
-            var errmsg = resp.result.error.message
-            d3.select("body").append("pre").text(errmsg+"\n"+resp.body);
+            // Errors are probably caused by the room
+            // already existing
+            gapi.client.housing.housing.updateRoom({
+              "number": r.number,
+              "x": r.x,
+              "y": r.y,
+              "capacity": r.capacity,
+            }).then(function(resp){
+              d3.select("body").append("pre").text(resp.body);
+            },function(resp){
+              var errmsg = resp.result.error.message
+              d3.select("body").append("pre").text(errmsg+"\n"+resp.body);
+            });
           });
           i++;
         }
