@@ -96,23 +96,32 @@ housing.upload.uploadList = function(list,url) {
     }
     if(file){
       var theList =  file.split(/\r\n|\n/);
-      var thenable = null;
       if("room" == list) {
-        thenable = gapi.client.housing.housing.updateRoomList({ rooms: theList });
+        housing.upload._uploadList( gapi.client.housing.housing.updateRoomList, "rooms", theList, 0, 100 );
       } else if("student" == list) {
-        thenable = gapi.client.housing.housing.updateStudentList({ emails: theList });
-      }
-      if(thenable) {
-        thenable.then(function(resp){
-          d3.select("body").append("pre").text(resp.body);
-        },function(resp){
-          console.log(resp);
-          d3.select("body").append("pre").text(resp.body);
-        });
+        housing.upload._uploadList( gapi.client.housing.housing.updateStudentList, "emails", theList, 0, 100 );
       }
     }
   });
-}
+};
+
+housing.upload._uploadList = function(fcn,prop,items,index,blocksize) {
+  var lastpass = items.length < index+blocksize;
+  var chunk = items.slice(index,index+blocksize);
+  var req = {append:true};
+  req[prop] = chunk;
+  fcn(req).then(function(resp){
+    if(!lastpass){
+      console.log("Index "+index+" complete");
+      housing.upload._uploadList(fcn,prop,items,index+blocksize,blocksize);
+    }else{
+      d3.select("body").append("pre").text(resp.body);
+    }
+  },function(resp){
+    console.log(resp);
+    d3.select("body").append("pre").text(resp.body);
+  });
+};
 
 housing.upload.roomList = function() { housing.upload.uploadList("room","/roomlist.csv"); }
 housing.upload.studentList = function() { housing.upload.uploadList("student","/studentlist.csv"); }
