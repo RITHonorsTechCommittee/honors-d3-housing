@@ -13,7 +13,7 @@ var housing = housing || {};
 housing.app = function(authorized) {
     // Select active elements of page
     // These are regions that will be filled by housing.js
-    var nav = d3.select("#floornav .floors");
+    var nav = d3.select("#floornav");
 
     if(authorized) {
         // If authorized, clear the navigation bar and the SVG element
