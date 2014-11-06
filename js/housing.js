@@ -98,7 +98,7 @@ housing.load = function(data,floor,d3svg) {
     console.log("Loading Floor "+floor);
     // Disable the button for the current floor
     d3.selectAll(".floors a.disabled").classed("disabled",false);
-    d3.select(".floors li[name=floor"+floor+"]").classed("disabled",true);
+    d3.select(".floors a[name=floor"+floor+"]").classed("disabled",true);
     
     // Sets up all the images so that the correct floor will always be visible
     housing.currentFloor = floor;
