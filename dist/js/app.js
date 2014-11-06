@@ -13,7 +13,7 @@ var housing = housing || {};
 housing.app = function(authorized) {
     // Select active elements of page
     // These are regions that will be filled by housing.js
-    var nav = d3.select("#floornav .floors");
+    var nav = d3.select("#floornav");
 
     if(authorized) {
         // If authorized, clear the navigation bar and the SVG element
@@ -93,7 +93,7 @@ housing.client = housing.client || {};
 
 housing.client.load = function(svg,nav,floor) {
     // Load the floor. 
-    if(gapi.client.housing) {
+    if(window.gapi && gapi.client && gapi.client.housing) {
         // If the Google APIs are available, then get the list of
         // available rooms through them.
         gapi.client.housing.housing.rooms().then(
@@ -103,17 +103,27 @@ housing.client.load = function(svg,nav,floor) {
                     housing.load(floors,floor,svg);
                 },
                 function(err) {
+                    console.log(err);
                     //TODO: identify error and handle appropriately
                 });
     } else {
         // display example rooms if api not available
         d3.json("/spec.json",function(err,jsonobj){
             if(jsonobj){
-                housing.init(svg,nav,jsonobj.floors);
+                housing.init(svg,nav,jsonobj.floors,false);
                 housing.load(jsonobj.floors,floor,svg);
             }
         });
     }
+};
+
+housing.client.current = function() {
+    //TODO: use gapi.client.housing.housing.current if available
+    return {
+        then: function(fcnSuccess,fcnFailure){
+            fcnFailure({"result":{"error": "Not Implemented"}});
+        }
+    };
 };
 
 // Software developed by Reginald Pierce for the RIT Honors Program
@@ -133,6 +143,7 @@ var housing = housing || {};
  * @param d3svg An SVG element in which the data will be drawn.
  */
 housing.init = function(d3svg,nav,data,enableTooltip) {
+    console.log("Initializing Housing App")
     // Set up fancy tooltips for the rooms
     if(typeof enableTooltip === "undefined"){
         // Default is not enabled
@@ -147,11 +158,19 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
     
     // Create navigation
     if( nav && data && data.length ) {
-        // In case it has been initialized before,
-        // get rid of old buttons
-        nav.selectAll("li").remove();
+        // Clear old stuff
+        nav.html(null);
+
+        //Set up button groups
+        var floors = nav.append("ul")
+            .classed("floors",true)
+            .classed("button-group",true);
+        var otherbuttons = nav.append("ul")
+            .classed("button-group",true)
+            .classed("round",true);
+
         // Add new buttons based on the data
-        nav.selectAll("li")
+        floors.selectAll("li")
                 .data(data)
             .enter()
                 .append("li")
@@ -165,6 +184,29 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
                         housing.load(data,d.number,d3svg);
                         d3.event.preventDefault();
                     });
+
+        // Create clear reservation button
+        var currentReservation = 
+            otherbuttons.append("li")
+                .append("a")
+                    .classed("button alert disabled",true)
+                    .text("Current Reservation: ")
+                    .append("span")
+                        .classed("current-reservation",true);
+        var clearReservation = otherbuttons.append("li")
+            .append("a")
+                .attr("href","#")
+                .classed("button alert disabled clear-reservation",true)
+                .text("Clear Reservation")
+                .on("click",housing.clearReservation);
+
+        // Start loading current reservation
+        housing.client.current().then(function(resp){
+            clearReservation.classed("disabled",false);
+            currentReservation.text(resp.result.roomNumber);
+        },function(resp){
+            currentReservation.text("None");
+        });
     }
 };
 
@@ -181,9 +223,10 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
  * @param d3svg An SVG element in which to draw the data.
  */
 housing.load = function(data,floor,d3svg) {
+    console.log("Loading Floor "+floor);
     // Disable the button for the current floor
-    d3.selectAll("a.disabled").classed("disabled",false);
-    d3.select("#floornav").select("ul").selectAll("li").select("[name=floor"+floor+"]").classed("disabled",true);
+    d3.selectAll(".floors a.disabled").classed("disabled",false);
+    d3.select(".floors li[name=floor"+floor+"]").classed("disabled",true);
     
     // Sets up all the images so that the correct floor will always be visible
     housing.currentFloor = floor;
@@ -223,13 +266,6 @@ housing.load = function(data,floor,d3svg) {
                 .attr("transform",housing.style.transform)
                 .attr("class","circle")
                 .on("click",function(d,j){
-                    //TODO: this is just for demo purposes
-                    for( var k = 0; k < data.length; k += 1 ) {
-                        if( data[k].number == floor ) {
-                            data[k].rooms[j].occupants = d.occupants + 1;
-                            housing.load(data,floor,d3svg);
-                        }
-                    }
                 });
 
             // Allow for tooltips if defined.
@@ -272,6 +308,32 @@ housing.load = function(data,floor,d3svg) {
         }
     }
 };
+
+/**
+ * Handles clicks on rooms
+ */
+housing.clickRoom = function(d,i) {
+    //TODO: this is just for demo purposes
+    for( var k = 0; k < data.length; k += 1 ) {
+        if( data[k].number == floor ) {
+            data[k].rooms[j].occupants = d.occupants + 1;
+            housing.load(data,floor,d3svg);
+        }
+    }
+    //TODO: hook into client.js
+}
+
+/**
+ * Handles clicks to the clear reservation button
+ */
+housing.clearReservation = function(d,i) {
+    // only do stuff if the button is enabled
+    if(!d3.select(".clear-reservation").classed("disabled")){
+        //TODO: clear reservation
+        alert("Not implemented");
+    }
+    d3.event.preventDefault();
+}
 
 /**
  * The style namespace contains functions to style d3 elements
