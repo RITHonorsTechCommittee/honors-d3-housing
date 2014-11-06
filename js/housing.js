@@ -127,14 +127,19 @@ var housing = {
                         .on("mouseout",housing.tooltip.hide);
                 }
 
-                // Shade room on mouseover
+                /* Shade room on mouseover
                 group.append("rect")
                     .attr("x", housing.style.bgxOffset)
                     .attr("y", housing.style.bgyOffset)
                     .attr("width", housing.style.bgWidth)
                     .attr("height", housing.style.bgHeight)
                     .attr("fill", "black")
-                    .attr("opacity", 0)
+                    .attr("opacity", 0)*/
+                
+                group.append("path")
+                    .attr("d", housing.style.bgpath)
+                    .attr("fill", "black")
+                    .attr("opacity", 0.6);
                 
                 // Add the base layer of the occupancy indicator
                 group.append("circle")
@@ -203,17 +208,75 @@ var housing = {
                 return "hidden";
             }
         },
-        bgxOffset: function(d) {
-            return d.bgx;
-        },
-        bgyOffset: function(d) {
-            return d.bgy;
-        },
-        bgWidth: function(d) {
-            return d.bgw;
-        },
-        bgHeight: function(d) {
-            return d.bgh;
+        bgpath: function(d) {
+            switch(d.bgpath) {
+                case 0:
+                    return "M26,50 v-75  h-52  v75  Z"; 
+
+                case 1:
+                    return "M39,43 v-78  h-78  v78  Z";
+
+                case 2:
+                    return "M39,50 v-75  h-78  v75  Z";
+
+                case 3:
+                    return "M52,32 v-58  h-103 v58  Z";
+
+                case 4:
+                    return "M51,63 v-113 h-102 v113 Z";
+
+                case 5:
+                    return "M38,41 v-75  h-76  v75  Z";
+
+                case 6:
+                    return "M26,37 v-75  h-51  v75  Z";
+
+                case 7:
+                    return "M25,37 v-75  h-48  v75  Z";
+
+                case 8:
+                    return "M40,37 v-75  h-80  v75  Z";
+
+                case 9:
+                    return "M48,62 v-58  h51 v-59 h-153 v117 Z";
+
+                case 10:
+                    return "M39,62 v-106 h-78  v106 Z";
+
+                case 11:
+                    return "M51,60 v-110 h-102 v110 Z";
+
+                case 12:
+                    return "M51,31 v-58  h-102 v58  Z";
+
+                case 13:
+                    return "M53,46 v-75  h-105 v75  Z";
+
+                case 14:
+                    return "M26,44 v-75  h-51  v75  Z";
+
+                case 15:
+                    return "M26,38 v-75  h-51  v75  Z";
+
+                case 16:
+                    return "M38,38 v-75  h-76  v75  Z"; 
+
+                case 17:
+                    return "M26,38 v-75  h-52  v75  Z";
+
+                case 18:
+                    return "M50,60 v-118 h-102 v118 Z";
+
+                case 19:
+                    return "M38,45 v-75  h-76  v75  Z";
+
+                case 20:
+                    return "M52,32 v-60  h-103 v60  Z"; 
+
+                default: 
+                    return;
+
+            }
         }
     }
 };
