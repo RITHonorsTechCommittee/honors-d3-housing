@@ -27,21 +27,17 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
             .html(housing.style.tooltip);
         d3svg.call(housing.tooltip);
     }
-    
+       
     // Create navigation
     if( nav && data && data.length ) {
         // Clear old stuff
         nav.html(null);
-
+        
         //Set up button groups
         var floors = nav.append("ul")
-            .classed("floors",true)
-            .classed("button-group",true);
+            .classed("floors button-group",true);
         var otherbuttons = nav.append("ul")
-            .classed("button-group",true)
-            .classed("round",true);
-
-        // Add new buttons based on the data
+            .classed("button-group round",true);
         floors.selectAll("li")
                 .data(data)
             .enter()
@@ -90,15 +86,15 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
  * data on the provided d3.js SVG element.
  *
  * @param data The JSON.  The format should follow from
- * 	/tests/sample.json
+ *     /tests/sample.json
  * @param floor The floor to render
  * @param d3svg An SVG element in which to draw the data.
  */
 housing.load = function(data,floor,d3svg) {
     console.log("Loading Floor "+floor);
     // Disable the button for the current floor
-    d3.selectAll(".floors a.disabled").classed("disabled",false);
-    d3.select(".floors li[name=floor"+floor+"]").classed("disabled",true);
+    d3.selectAll("a.disabled").classed("disabled",false);
+    d3.select(".floors [name=floor"+floor+"]").classed("disabled",true);
     
     // Sets up all the images so that the correct floor will always be visible
     housing.currentFloor = floor;
@@ -112,15 +108,15 @@ housing.load = function(data,floor,d3svg) {
         .attr("visibility",housing.style.imgvisibility)
     
         // add new images if necessary and style them appropriately
-    .enter()
-        .append("image")
-            .attr("x",0)
-            .attr("y",0)
-            .attr("width",768)
-            .attr("height",609)
-            .attr("xlink:href",housing.style.imghref)
-            .attr("visibility",housing.style.imgvisibility);
-            
+        .enter()
+            .append("image")
+                .attr("x",0)
+                .attr("y",0)
+                .attr("width",768)
+                .attr("height",609)
+                .attr("xlink:href",housing.style.imghref)
+                .attr("visibility",housing.style.imgvisibility);
+                
     // It is simplest just to remove all circles to make sure they update correctly
     d3svg.selectAll(".circle").remove();
 
@@ -137,8 +133,7 @@ housing.load = function(data,floor,d3svg) {
             var group = rooms.enter().append("g")
                 .attr("transform",housing.style.transform)
                 .attr("class","circle")
-                .on("click",function(d,j){
-                });
+                .on("click", housing.clickRoom);
 
             // Allow for tooltips if defined.
             if(housing.tooltip){
@@ -147,13 +142,11 @@ housing.load = function(data,floor,d3svg) {
             }
 
             // Shade room on mouseover
-            group.append("rect")
-                .attr("x", housing.style.bgxOffset)
-                .attr("y", housing.style.bgyOffset)
-                .attr("width", housing.style.bgWidth)
-                .attr("height", housing.style.bgHeight)
+            group.append("path")
+                .attr("d", housing.style.bgpath)
+                .classed("shading",true)
                 .attr("fill", "black")
-                .attr("opacity", 0)
+                .attr("opacity", 0);
             
             // Add the base layer of the occupancy indicator
             group.append("circle")
@@ -248,19 +241,56 @@ housing.style = {
             return "hidden";
         }
     },
-    bgxOffset: function(d) {
-        return d.bgx;
-    },
-    bgyOffset: function(d) {
-        return d.bgy;
-    },
-    bgWidth: function(d) {
-        return d.bgw;
-    },
-    bgHeight: function(d) {
-        return d.bgh;
+    bgpath: function(d) {
+        switch(d.bgpath) {
+            case 0:
+                return "M26,50 v-75  h-52  v75  Z"; 
+             case 1:
+                return "M39,43 v-78  h-78  v78  Z";
+             case 2:
+                return "M39,50 v-75  h-78  v75  Z";
+             case 3:
+                return "M52,32 v-58  h-103 v58  Z";
+             case 4:
+                return "M51,63 v-113 h-102 v113 Z";
+             case 5:
+                return "M38,41 v-75  h-76  v75  Z";
+             case 6:
+                return "M26,37 v-75  h-51  v75  Z";
+             case 7:
+                return "M25,37 v-75  h-48  v75  Z";
+             case 8:
+                return "M40,37 v-75  h-80  v75  Z";
+             case 9:
+                return "M48,62 v-58  h51 v-59 h-153 v117 Z";
+             case 10:
+                return "M39,62 v-106 h-78  v106 Z";
+             case 11:
+                return "M51,60 v-110 h-102 v110 Z";
+             case 12:
+                return "M51,31 v-58  h-102 v58  Z";
+             case 13:
+                return "M53,46 v-75  h-105 v75  Z";
+             case 14:
+                return "M26,44 v-75  h-51  v75  Z";
+             case 15:
+                return "M26,38 v-75  h-51  v75  Z";
+             case 16:
+                return "M38,38 v-75  h-76  v75  Z"; 
+             case 17:
+                return "M26,38 v-75  h-52  v75  Z";
+             case 18:
+                return "M50,60 v-118 h-102 v118 Z";
+             case 19:
+                return "M38,45 v-75  h-76  v75  Z";
+             case 20:
+                return "M52,32 v-60  h-103 v60  Z"; 
+             default: 
+                return;
+         }
     }
 };
+
 // Allow for statements of the form housing.style.color.empty
 housing.style.color.empty = "color-empty";
 housing.style.color.partial = "color-partial";
