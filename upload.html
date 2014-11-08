@@ -1,0 +1,140 @@
+<DOCTYPE html>
+<html>
+<head>
+  <title>Upload Rooms to Google Cloud Endpoints</title>
+  <meta charset="utf-8"> 
+  <link rel=stylesheet href="/bower_components/foundation/css/normalize.css">
+  <link rel=stylesheet href="/bower_components/foundation/css/foundation.css">
+</head>
+<body>
+  
+<script src="/bower_components/d3/d3.js" charset="utf-8"></script>
+<script src="/js/housing.js" charset="utf-8"></script>
+<script src="/js/auth.js" charset="utf-8"></script>
+<script src="/js/client.js" charset="utf-8"></script>
+<script>
+// Google API callbacks don't work with namespaces
+function gapiCallback() {
+  d3.select("body").append("p").text("loading...").classed("loading",true);
+  housing.auth.init();
+}
+
+housing.app = function(authenticated){
+  d3.select(".loading").html(null);
+  if(authenticated) {
+    d3.select(".button").data([]).exit().remove();
+    d3.select("body").append("a")
+      .classed("button",true)
+      .text("Create Rooms")
+      .on("click",housing.upload.createRooms);
+
+    d3.select("body").append("a")
+      .classed("button",true)
+      .text("Upload room list")
+      .on("click",housing.upload.roomList);
+
+    d3.select("body").append("a")
+      .classed("button",true)
+      .text("Upload student list")
+      .on("click",housing.upload.studentList);
+
+  } else {
+    d3.select("body")
+      .append("a")
+        .classed("button", true)
+        .text("Sign In")
+        .on("click",housing.auth.click);
+  }
+};
+
+housing.upload = housing.upload || {};
+
+housing.upload.createRooms = function() {
+  d3.json("/spec.json",function(err,jsonobj){
+    if(jsonobj){
+      var i = 0;
+      for(j in jsonobj.floors){
+        var f = jsonobj.floors[j];
+        for(k in f.rooms){
+          var r = f.rooms[k];
+          gapi.client.housing.housing.createRoom({
+            "number": r.number,
+            "x": r.x,
+            "y": r.y,
+            "capacity": r.capacity,
+            "floor":f.number
+          }).then(function(resp){
+            // Rooms have failed to show up in the
+            // rooms list if not updated first
+            gapi.client.housing.housing.updateRoom({
+              "number": r.number,
+            }).then(function(resp){
+              d3.select("body").append("pre").text(resp.body);
+            },function(resp){
+              var errmsg = resp.result.error.message
+              d3.select("body").append("pre").text(errmsg+"\n"+resp.body);
+            });
+          },function(resp){
+            // Errors are probably caused by the room
+            // already existing
+            gapi.client.housing.housing.updateRoom({
+              "number": r.number,
+              "x": r.x,
+              "y": r.y,
+              "capacity": r.capacity,
+            }).then(function(resp){
+              d3.select("body").append("pre").text(resp.body);
+            },function(resp){
+              var errmsg = resp.result.error.message
+              d3.select("body").append("pre").text(errmsg+"\n"+resp.body);
+            });
+          });
+          i++;
+        }
+      }
+    }
+  });
+}
+
+housing.upload.uploadList = function(list,url) {
+  d3.text(url,function(err,file){
+    if(err){
+      console.log(err);
+      alert("List "+url+" could not be found ");
+    }
+    if(file){
+      var theList =  file.split(/\r\n|\n/);
+      if("room" == list) {
+        housing.upload._uploadList( gapi.client.housing.housing.updateRoomList, "rooms", theList, 0, 100 );
+      } else if("student" == list) {
+        housing.upload._uploadList( gapi.client.housing.housing.updateStudentList, "emails", theList, 0, 100 );
+      }
+    }
+  });
+};
+
+housing.upload._uploadList = function(fcn,prop,items,index,blocksize) {
+  var lastpass = items.length < index+blocksize;
+  var chunk = items.slice(index,index+blocksize);
+  var req = {append:true};
+  req[prop] = chunk;
+  fcn(req).then(function(resp){
+    if(!lastpass){
+      console.log("Index "+index+" complete");
+      housing.upload._uploadList(fcn,prop,items,index+blocksize,blocksize);
+    }else{
+      d3.select("body").append("pre").text(resp.body);
+    }
+  },function(resp){
+    console.log(resp);
+    d3.select("body").append("pre").text(resp.body);
+  });
+};
+
+housing.upload.roomList = function() { housing.upload.uploadList("room","/roomlist.csv"); }
+housing.upload.studentList = function() { housing.upload.uploadList("student","/studentlist.csv"); }
+
+</script>
+<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
+</body>
+</html>

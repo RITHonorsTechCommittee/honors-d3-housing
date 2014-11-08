@@ -1,0 +1,176 @@
+/* Styles added in addition to the default foundation styles */
+
+.top-bar {
+  height: 51px;
+}
+
+.top-bar .name h1, .top-bar img {
+  height: 51px; }
+
+.top-bar .name h1 a {
+  display: inline;
+  padding: 0 0.3125rem;
+  vertical-align: top; }
+
+.ritlogo, .ritabbr, .ritlong {
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: inline-block;
+  margin-top: 0.625rem; }
+
+.ritabbr {
+  background-image: url('../img/rit_30.png');
+  height: 1.875rem;
+  padding-left: 6.3125rem; }
+
+.ritlong {
+  background-image: url('../img/rit_long.min.svg');
+  height: 1.625rem;
+  padding-left: 20rem;
+  margin: 0 0 0.3rem;
+  background-position: bottom;
+  background-size: 16.59375rem 1.125rem; }
+
+.ritsearch input {
+  box-shadow: none;
+  border-right: none;
+  padding-top: 0.2rem;
+  padding-bottom: 0.1rem;
+  border-radius: 0.6rem 0px 0px 0.6rem;
+  border-right: none;
+  margin: 0;
+  height: 1.6rem; }
+
+.search-button {
+  border-style: solid;
+  border-width: 0px;
+  cursor: pointer;
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  line-height: normal;
+  margin: 0 0 1.25rem;
+  position: relative;
+  text-decoration: none;
+  text-align: center;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0;
+  display: inline-block;
+  /*    @include button($bg:$body-bg);
+    @include button-size($button-med, false); */
+  background-color: white;
+  border-color: #cccccc;
+  color: #333333;
+  /*    color: $body-font-color; */
+  height: 1.6rem;
+  border: 1px solid #cccccc;
+  padding: 0.2rem 0.2rem 0.1rem !important;
+  border-radius: 0px 0.6rem 0.6rem 0px;
+  border-left: none;
+  margin: 0; }
+  .search-button:hover, .search-button:focus {
+    background-color: #eeeeee; }
+  .search-button:hover, .search-button:focus {
+    color: #333333; }
+
+li.ritsearch {
+  padding: 0.3rem 17px; }
+
+.ritsearch i {
+  font-size: initial; }
+
+.top-bar .menu-icon {
+  text-indent: 2.1875rem;
+  width: 51px;
+  height: 51px;
+  display: block;
+  padding: 0;
+  color: white;
+  position: relative;
+  transform: translate3d(0, 0, 0); }
+  .top-bar .menu-icon span::after {
+    content: "";
+    position: absolute;
+    display: block;
+    height: 0;
+    top: 50%;
+    margin-top: -0.5rem;
+    left: 0.90625rem;
+    box-shadow: 0 0px 0 1px white, 0 7px 0 1px white, 0 14px 0 1px white;
+    width: 1rem; }
+  .top-bar .menu-icon span:hover:after {
+    box-shadow: 0 0px 0 1px #b3b3b3, 0 7px 0 1px #b3b3b3, 0 14px 0 1px #b3b3b3; }
+
+.off-canvas-list div.row {
+  padding: 0.66667rem; }
+
+#logo {
+  position: fixed;
+  bottom: 0;
+  left: 10px;
+  z-index: 750;
+  background-color: white;
+  padding-right: 1rem; }
+
+#logo img {
+  position: absolute;
+  bottom: 0;
+  height: 8rem; }
+
+#logo h2 {
+  padding-left: 7rem; }
+
+#logo h3 {
+  padding-left: 0.9375rem; }
+
+#logo .wrap-inner {
+  position: relative; }
+
+.posts article > div {
+  border-bottom: 3px groove #c7c7c7;
+  padding: 10px;
+  background-color: white; }
+
+.posts .coverimg {
+  background-size: cover;
+  height: 10em;
+  width: 100%; }
+
+@media only screen and (min-width:40.063em) {
+  .posts article {
+    padding: 45px;
+    min-height: 40rem;
+    background-size: cover; }
+  .posts article > div {
+    border-bottom: none;
+    max-width: 450px; }
+  .posts article:nth-child(odd) > div {
+    float: right; }
+  .posts article:nth-child(even) > div {
+    float: left; } }
+
+/* Styles for housing selection */
+
+.color-empty {
+  fill: #00FF00; }
+
+.color-partial {
+  fill: #0000FF; }
+
+.color-full {
+  fill: #CC0000; }
+
+.circle:hover .color-empty {
+  fill: #00DD00; }
+
+.circle:hover .color-partial {
+  fill: #0000CC; }
+
+.circle:hover .color-full {
+  fill: #AA0000; }
+
+/*
+.circle > *{
+  transform: translate(0,0); }
+.circle:hover > * {
+  transform: translate(-0.2rem, -0.2rem); }
+*/
