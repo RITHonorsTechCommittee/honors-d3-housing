@@ -112,14 +112,7 @@ var housing = {
                                 housing.load(data,floor,d3svg);
                             }
                         }
-                    })
-                    .on("mouseover", function(d) {
-                        d3.select(this).select("path").attr("opacity", 0.2);
-                    })
-                    .on("mouseout", function(d) {
-                        d3.select(this).select("path").attr("opacity", 0);
                     });
-                
 
                 // Allow for tooltips if defined.
                 if(housing.tooltip){
@@ -128,9 +121,9 @@ var housing = {
                 }
 
                 // Shade room on mouseover
-                
                 group.append("path")
                     .attr("d", housing.style.bgpath)
+                    .classed("shading",true)
                     .attr("fill", "black")
                     .attr("opacity", 0);
                 

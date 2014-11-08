@@ -168,6 +168,12 @@ li.ritsearch {
 .circle:hover .color-full {
   fill: #AA0000; }
 
+.circle > .shading {
+  opacity: 0;
+  transition: opacity 200ms ease-out; }
+  .circle:hover > .shading {
+    opacity: 0.2; }
+
 /*
 .circle > *{
   transform: translate(0,0); }
