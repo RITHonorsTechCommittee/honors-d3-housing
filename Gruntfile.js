@@ -2,6 +2,8 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    found: grunt.file.readJSON('bower_components/foundation/bower.json'),
+    jq: grunt.file.readJSON('bower_components/jquery/bower.json'),
     cdn: '//cdn.jsdelivr.net/',
 
     'string-replace': {
@@ -12,8 +14,8 @@ module.exports = function(grunt) {
         options: {
           replacements: [
             {pattern: /{{\s*VERSION\s*}}/g, replacement: '<%= pkg.version %>'},
-            {pattern: /\/bower_components\/foundation\//g, replacement: '<%= cdn %>foundation/5.4.6/'},
-            {pattern: '/bower_components/jquery/dist/jquery.min.js', replacement: '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'},
+            {pattern: /\/bower_components\/foundation\//g, replacement: '<%= cdn %>foundation/<%= found.version %>/'},
+            {pattern: '/bower_components/jquery/dist/jquery.min.js', replacement: '//ajax.googleapis.com/ajax/libs/jquery/<%= jq.version %>/jquery.min.js'},
             {pattern: /\/bower_components/g, replacement: '/vendor'},
             {pattern: /^.*="\/js\/(?!app).*\n/gm, replacement: ''}
             /* remove separate js files and replace with app.js */

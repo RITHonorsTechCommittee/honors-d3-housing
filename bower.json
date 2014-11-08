@@ -21,9 +21,9 @@
     "/*.*"
   ],
   "devDependencies": {
-    "d3": "~3.4.11",
+    "d3": "~3.4.0",
     "d3-tip": "~0.6.4",
-    "foundation": "~5.4.4",
+    "foundation": "~5.4.0",
     "fontawesome": "~4.2.0"
   }
 }
