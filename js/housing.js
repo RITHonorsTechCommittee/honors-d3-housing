@@ -96,7 +96,8 @@ housing.load = function(data,floor,d3svg) {
     d3.selectAll("a.disabled").classed("disabled",false);
     d3.select(".floors [name=floor"+floor+"]").classed("disabled",true);
     
-    // Sets up all the images so that the correct floor will always be visible
+    // Store parameters for use by click handlers
+    housing.d3svg = d3svg;
     housing.currentFloor = floor;
     housing.currentData = data;
     
@@ -179,10 +180,11 @@ housing.load = function(data,floor,d3svg) {
  */
 housing.clickRoom = function(d,i) {
     //TODO: this is just for demo purposes
+    var data = housing.currentData;
     for( var k = 0; k < data.length; k += 1 ) {
-        if( data[k].number == floor ) {
-            data[k].rooms[j].occupants = d.occupants + 1;
-            housing.load(data,floor,d3svg);
+        if( data[k].number == housing.currentFloor ) {
+            data[k].rooms[i].occupants = d.occupants + 1;
+            housing.load(data,housing.currentFloor,housing.d3svg);
         }
     }
     //TODO: hook into client.js
