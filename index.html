@@ -76,8 +76,32 @@
     <div class="row">
       <section>
         <h1>Honors Housing Selection</h1>
-        <h3>Pick a Floor and Click a Room To Reserve It</h3>
+        <h3>Pick a Floor and Click a Room To Reserve It <a href="#" onClick="instruct=document.getElementById('instructions').style.display='block'; return false;">(?)</a></h3>
       </section>
+      <div id="instructions">
+        <h1>Gibson Hall Sign Up Instructions</h1>
+        <ol>
+          <li>
+            Members that wish to live in Honors housing for the 2015-2016 academic year
+            must go online to <a href="http://myhousing.rit.edu">http://myhousing.rit.edu</a>
+            to register for Housing Selection Phase II sometime between December 1, 2014 and
+            December 7, 2014.
+            <ul>
+              <li>Members must choose Honors Housing as one of their options.</li>
+              <li>After completing the online registration, member must sign up on the
+              Honors web site and enter their name on the room they wish to live in for 
+              the 2015-2016 academic year.</li>
+              <li>If you do not sign up in both systems, you will not be placed in Gibson.</li>
+            </ul>
+          </li>
+          <li>
+            If you would like a single, sign up on the roster in a double, then email
+            <a href="mailto:honors@rit.edu">honors@rit.edu</a> to request a single. Single rooms
+            have an added cost and are assigned on a first come first serve basis.
+          </li>
+        </ol>
+        <input type="button" value="Got it!" onClick="document.getElementById('instructions').style.display='none';"/>
+      </div>
       <section>
           <nav id="floornav" class="button-bar">
               <ul class="button-group"><li class="loading">Loading</li></ul>
