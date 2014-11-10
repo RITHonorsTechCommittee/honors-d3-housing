@@ -175,12 +175,21 @@ li.ritsearch {
     opacity: 0.2; }
 
 div#instructions {
-    border: 2px solid #8F8F8F;
     background-color: #EEEEEE;
-    padding: 25px;
-    display: none;
+    overflow: hidden;
+    max-height: 0px;
     width: 83%;
     min-width: 387px;
+    margin-bottom: 5px;
+    transition: max-height 800ms ease;
+}
+
+div#instructions-inner {
+    margin: 25px;
+}
+
+.instructions-open {
+    max-height: 400px !important;    
 }
 
 /*
