@@ -19,6 +19,9 @@ function gapiCallback() {
   housing.auth.init();
 }
 
+// Comment this out to modify the production server
+housing.auth.hostname = "http://localhost:8080";
+
 housing.app = function(authenticated){
   d3.select(".loading").html(null);
   if(authenticated) {
