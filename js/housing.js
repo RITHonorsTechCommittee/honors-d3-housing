@@ -64,7 +64,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
         var clearReservation = otherbuttons.append("li")
             .append("a")
                 .attr("href","#")
-                .classed("button alert disabled clear-reservation",true)
+                .classed("button alert clear-reservation",true)
                 .text("Clear Reservation")
                 .on("click",housing.clearReservation);
 
@@ -73,7 +73,9 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
             clearReservation.classed("disabled",false);
             currentReservation.text(resp.result.roomNumber);
         },function(resp){
+            clearReservation.classed("disabled",true);
             currentReservation.text("None");
+            console.log(resp);
         });
     }
 };
@@ -179,15 +181,32 @@ housing.load = function(data,floor,d3svg) {
  * Handles clicks on rooms
  */
 housing.clickRoom = function(d,i) {
-    //TODO: this is just for demo purposes
-    var data = housing.currentData;
-    for( var k = 0; k < data.length; k += 1 ) {
-        if( data[k].number == housing.currentFloor ) {
-            data[k].rooms[i].occupants = d.occupants + 1;
-            housing.load(data,housing.currentFloor,housing.d3svg);
+    if( housing.auth && housing.client ) {
+        // reserve a room
+        housing.client.reserve(d.number).then(function(resp){
+            housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
+            d3.select('.current-reservation').text(d.number);
+        },function(resp){
+            //TODO: handle error
+            console.log(resp);
+        },this);
+        
+        //TODO: loading indicator
+    } else {
+        // this is just for demo purposes
+        // loop through the data until the clicked room is found
+        // and add one to the occupants number. This simulates
+        // new data being returned from the housing.client.reserve
+        // method.
+        var data = housing.currentData;
+        for( var k = 0; k < data.length; k += 1 ) {
+            if( data[k].number == housing.currentFloor ) {
+                data[k].rooms[i].occupants = d.occupants + 1;
+                break;
+            }
         }
+        housing.load(data,housing.currentFloor,housing.d3svg);
     }
-    //TODO: hook into client.js
 }
 
 /**
@@ -196,8 +215,19 @@ housing.clickRoom = function(d,i) {
 housing.clearReservation = function(d,i) {
     // only do stuff if the button is enabled
     if(!d3.select(".clear-reservation").classed("disabled")){
-        //TODO: clear reservation
-        alert("Not implemented");
+        if( housing.auth && housing.client ) {
+            //TODO: loading indication
+            housing.client.deleteReservation().then(function(resp){
+                housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
+                d3.select('.current-reservation').text('None');
+                d3.select('.clear-reservation').classed("disabled",true);
+            },function(resp){
+                //TODO: handle error
+                console.log(resp);
+            },this);
+        } else {
+            alert("API not available");
+        }
     }
     d3.event.preventDefault();
 }

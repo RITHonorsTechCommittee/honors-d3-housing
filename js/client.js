@@ -5,7 +5,7 @@ housing.client = housing.client || {};
 
 housing.client.load = function(svg,nav,floor) {
     // Load the floor. 
-    if(window.gapi && gapi.client && gapi.client.housing) {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.rooms) {
         // If the Google APIs are available, then get the list of
         // available rooms through them.
         gapi.client.housing.housing.rooms().then(
@@ -30,10 +30,37 @@ housing.client.load = function(svg,nav,floor) {
 };
 
 housing.client.current = function() {
-    //TODO: use gapi.client.housing.housing.current if available
-    return {
-        then: function(fcnSuccess,fcnFailure){
-            fcnFailure({"result":{"error": "Not Implemented"}});
-        }
-    };
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.current) {
+        return gapi.client.housing.housing.current();
+    } else {
+        return {
+            then: function(fcnSuccess,fcnFailure){
+                fcnFailure({"result":{"error": "API Not Available"}});
+            }
+        };
+    }
+};
+
+housing.client.reserve = function(num) {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.reserve) {
+        return gapi.client.housing.housing.reserve({"number":num});
+    } else {
+        return {
+            then: function(fcnSuccess,fcnFailure){
+                fcnFailure({"result":{"error": "API Not Available"}});
+            }
+        };
+    }
+};
+
+housing.client.deleteReservation = function() {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.deleteReservation) {
+        return gapi.client.housing.housing.deleteReservation();
+    } else {
+        return {
+            then: function(fcnSuccess,fcnFailure){
+                fcnFailure({"result":{"error": "API Not Available"}});
+            }
+        };
+    }
 };
