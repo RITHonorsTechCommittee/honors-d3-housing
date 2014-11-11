@@ -192,13 +192,16 @@ div#instructions-inner {
     max-height: 1000px !important;    
 }
 
-.loading {
+.fixed-center {
     position: fixed;
-    width: 100px;
-    height: 100px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.loading {
+    width: 100px;
+    height: 100px;
     background-image: url('../img/logo-plain.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -206,10 +209,6 @@ div#instructions-inner {
 
 p.loading-text {
     color: #232323;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     font-size: 28px;
     margin-top: 50px;
     text-indent: 30px;
