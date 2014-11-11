@@ -223,6 +223,7 @@ p.loading-text {
     margin-left: 45px;
     position: fixed;
     animation: load-anim 6s infinite linear;
+    -webkit-animation: load-anim 6s infinite linear;
 }
 
 @keyframes load-anim {
@@ -239,6 +240,22 @@ p.loading-text {
     91%  {color: rgba(0  ,235,0,1); }
     99%  {color: rgba(0  ,255,0,0); transform: rotate( 270deg ); }
     100% {color: rgba(0  ,0  ,0,0); transform: rotate( 270deg ); }
+}
+
+@-webkit-keyframes load-anim {
+    0%   {color: rgba(235,235,0,0); -webkit-transform: rotate( 140deg ); }
+    1%   {color: rgba(235,235,0,1); -webkit-transform: rotate( 140deg ); }
+    25%  {color: rgba(235,235,0,1); }
+    33%  {color: rgba(235,235,0,0); -webkit-transform: rotate( 270deg ); }
+    34%  {color: rgba(235,0  ,0,0); -webkit-transform: rotate( 140deg ); }
+    35%  {color: rgba(235,0  ,0,1); -webkit-transform: rotate( 140deg ); }
+    58%  {color: rgba(235,0  ,0,1); }
+    66%  {color: rgba(235,0  ,0,0); -webkit-transform: rotate( 270deg ); }
+    67%  {color: rgba(0  ,235,0,0); -webkit-transform: rotate( 140deg ); }
+    68%  {color: rgba(0  ,235,0,1); -webkit-transform: rotate( 140deg ); }
+    91%  {color: rgba(0  ,235,0,1); }
+    99%  {color: rgba(0  ,255,0,0); -webkit-transform: rotate( 270deg ); }
+    100% {color: rgba(0  ,0  ,0,0); -webkit-transform: rotate( 270deg ); }
 }
 
 .loading-screen {
