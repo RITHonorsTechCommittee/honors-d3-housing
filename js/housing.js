@@ -69,13 +69,19 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
                 .on("click",housing.clearReservation);
 
         // Start loading current reservation
+        //TODO: don't remove loading indication until this is done.
         housing.client.current().then(function(resp){
             clearReservation.classed("disabled",false);
             currentReservation.text(resp.result.roomNumber);
         },function(resp){
-            clearReservation.classed("disabled",true);
-            currentReservation.text("None");
-            console.log(resp);
+            switch(resp.result.error.code){
+                case 401: 
+                    housing.client.errorHelper(resp.result.error,'current()'); break;
+                case 404: case 600: 
+                    clearReservation.classed("disabled",true); currentReservation.text("None"); break;
+                default:
+                    housing.client.displayError(housing.client.serverError+"'current()'",resp.result.error); break;
+            }
         });
     }
 };
@@ -187,8 +193,7 @@ housing.clickRoom = function(d,i) {
             housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
             d3.select('.current-reservation').text(d.number);
         },function(resp){
-            //TODO: handle error
-            console.log(resp);
+            housing.client.errorHelper(resp.result.error,'reserve()');
         },this);
         
         //TODO: loading indicator
@@ -222,8 +227,7 @@ housing.clearReservation = function(d,i) {
                 d3.select('.current-reservation').text('None');
                 d3.select('.clear-reservation').classed("disabled",true);
             },function(resp){
-                //TODO: handle error
-                console.log(resp);
+                housing.client.errorHelper(resp.result.error,'deleteReservation()');
             },this);
         } else {
             alert("API not available");

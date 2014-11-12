@@ -34,7 +34,7 @@ housing.auth.result = function(result) {
         // indicating whether or not the user is signed in
         housing.app((result && !result.error));
     } else {
-        // fallback if housing app not defined?
+        housing.client.displayError("The application code is missing. Please contact the developers");
     }
 }
 
