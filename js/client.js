@@ -80,7 +80,9 @@ housing.client.deleteReservation = function() {
 housing.client.displayError = function (msg,log) {
     if(msg){
         //TODO: do better than this.
-        alert(msg);
+        //alert(msg);
+        $("#errorModal .message").html(msg);
+        $("#errorModal").foundation('reveal', 'open');
     }
     if(log && window.console && console.log){
         console.log(log);
