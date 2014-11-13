@@ -7,6 +7,8 @@ housing.auth.clientId = '180343920180-41f9qsqdcf9it1poolqtqages644lgs3.apps.goog
 
 housing.auth.scopes = 'https://www.googleapis.com/auth/userinfo.email';
 
+housing.auth.hostname = 'https://rithonorshousing.appspot.com';
+
 housing.auth.init = function() {
     var apisToLoad;
     var loadCallback = function() {
@@ -16,7 +18,7 @@ housing.auth.init = function() {
     };
 
     apisToLoad = 2;
-    gapi.client.load('housing', 'v1', loadCallback, "https://rithonorshousing.appspot.com/_ah/api");
+    gapi.client.load('housing', 'v1', loadCallback, housing.auth.hostname+"/_ah/api");
     gapi.client.load('oauth2', 'v2', loadCallback);
 };
 
