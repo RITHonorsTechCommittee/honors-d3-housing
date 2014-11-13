@@ -19,14 +19,23 @@ function gapiCallback() {
   housing.auth.init();
 }
 
+// Comment this out to modify the production server
+housing.auth.hostname = "http://localhost:8080";
+
 housing.app = function(authenticated){
   d3.select(".loading").html(null);
   if(authenticated) {
     d3.select(".button").data([]).exit().remove();
+
     d3.select("body").append("a")
       .classed("button",true)
       .text("Create Rooms")
       .on("click",housing.upload.createRooms);
+
+    d3.select("body").append("a")
+      .classed("button",true)
+      .text("Update Rooms")
+      .on("click",housing.upload.updateRooms);
 
     d3.select("body").append("a")
       .classed("button",true)
@@ -57,37 +66,32 @@ housing.upload.createRooms = function() {
         var f = jsonobj.floors[j];
         for(k in f.rooms){
           var r = f.rooms[k];
-          gapi.client.housing.housing.createRoom({
-            "number": r.number,
-            "x": r.x,
-            "y": r.y,
-            "capacity": r.capacity,
-            "floor":f.number
-          }).then(function(resp){
-            // Rooms have failed to show up in the
-            // rooms list if not updated first
-            gapi.client.housing.housing.updateRoom({
-              "number": r.number,
-            }).then(function(resp){
-              d3.select("body").append("pre").text(resp.body);
-            },function(resp){
-              var errmsg = resp.result.error.message
-              d3.select("body").append("pre").text(errmsg+"\n"+resp.body);
-            });
-          },function(resp){
-            // Errors are probably caused by the room
-            // already existing
-            gapi.client.housing.housing.updateRoom({
-              "number": r.number,
-              "x": r.x,
-              "y": r.y,
-              "capacity": r.capacity,
-            }).then(function(resp){
-              d3.select("body").append("pre").text(resp.body);
-            },function(resp){
-              var errmsg = resp.result.error.message
-              d3.select("body").append("pre").text(errmsg+"\n"+resp.body);
-            });
+          r["floor"] = f.number;
+          
+          gapi.client.housing.housing.createRoom(r).then(function(resp){
+            d3.select("body").append("pre").text(resp.body);
+          },function(resp) {
+            d3.select("body").append("pre").text(resp.body);
+          });
+          i++;
+        }
+      }
+    }
+  });
+}
+
+housing.upload.updateRooms = function() {
+  d3.json("/spec.json",function(err,jsonobj){
+    if(jsonobj){
+      var i = 0;
+      for(j in jsonobj.floors){
+        var f = jsonobj.floors[j];
+        for(k in f.rooms){
+          var r = f.rooms[k];
+          gapi.client.housing.housing.updateRoom(r).then(function(resp){
+            d3.select("body").append("pre").text(resp.body);
+          },function(resp) {
+            d3.select("body").append("pre").text(resp.body);
           });
           i++;
         }
