@@ -266,14 +266,14 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
         var currentReservation = 
             otherbuttons.append("li")
                 .append("a")
-                    .classed("button alert disabled",true)
+                    .classed("button alert",true)
                     .text("Current Reservation: ")
                     .append("span")
                         .classed("current-reservation",true);
         var clearReservation = otherbuttons.append("li")
             .append("a")
                 .attr("href","#")
-                .classed("button alert clear-reservation",true)
+                .classed("button alert clear-reservation disabled",true)
                 .text("Clear Reservation")
                 .on("click",housing.clearReservation);
 
@@ -310,7 +310,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
 housing.load = function(data,floor,d3svg) {
     console.log("Loading Floor "+floor);
     // Disable the button for the current floor
-    d3.selectAll("a.disabled").classed("disabled",false);
+    d3.selectAll(".floors .disabled").classed("disabled",false);
     d3.select(".floors [name=floor"+floor+"]").classed("disabled",true);
     
     // Store parameters for use by click handlers
@@ -401,6 +401,7 @@ housing.clickRoom = function(d,i) {
         housing.client.reserve(d.number).then(function(resp){
             housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
             d3.select('.current-reservation').text(d.number);
+            d3.select('.clear-reservation').classed('disabled',false);
         },function(resp){
             housing.client.errorHelper(resp.result.error,'reserve()');
         },this);
