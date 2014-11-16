@@ -18,11 +18,12 @@ housing.client.load = function(svg,nav,floor) {
                     housing.load(floors,floor,svg);
                 },
                 function(resp) {
-                    var errno = resp.result.error.code;
+                    var code = resp.result.error.code;
                     var msg = resp.result.error.message;
                     if(code < 500){
                         if(code == 401){
                             housing.client.displayError(housing.client.unauthorizedError,resp.result.error);
+                            window.setTimeout(housing.app,0,false);
                         } else {
                             housing.client.displayError(msg,resp.result.error);
                         }
@@ -96,6 +97,7 @@ housing.client.errorHelper = function (error,source) {
         if(error.message.contains('@')){
             msg += "<br><br>"+error.message;
         }
+        window.setTimeout(housing.app,0,false);
     } else {
         if( error.code >= 500 ) {
             msg = housing.client.serverError;

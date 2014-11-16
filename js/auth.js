@@ -45,7 +45,8 @@ housing.auth.click = function(evt) {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
         scope: housing.auth.scopes,
-        immediate: false
+        immediate: false,
+        authuser: "",
     }, housing.auth.result);
     return false;
 }

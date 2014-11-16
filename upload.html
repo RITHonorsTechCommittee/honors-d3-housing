@@ -58,6 +58,16 @@ housing.app = function(authenticated){
 
 housing.upload = housing.upload || {};
 
+function sleep(millis) {
+  var start = new Date().getTime();
+  for(var i = 0; i < 1e7; i++){
+    var now = new Date().getTime()
+    if((now - start) > millis){
+      break;
+    }
+  }
+}
+
 housing.upload.createRooms = function() {
   d3.json("/spec.json",function(err,jsonobj){
     if(jsonobj){
@@ -74,6 +84,7 @@ housing.upload.createRooms = function() {
             d3.select("body").append("pre").text(resp.body);
           });
           i++;
+          sleep(1000);   
         }
       }
     }
