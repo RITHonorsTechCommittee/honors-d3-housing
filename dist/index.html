@@ -122,16 +122,23 @@
       </section>
     </div>
 <!-- END HOUSING SELECTION PART -->
+    <div id="errorModal" class="reveal-modal" data-reveal>
+      <h1>Error</h1>
+      <p class="alert message">An error has occurred</p>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
   </div>
 </div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation.min.js"></script>
 <script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation/foundation.topbar.js"></script>
 <script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation/foundation.offcanvas.js"></script>
+<script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation/foundation.reveal.js"></script>
 <script src="/vendor/d3/d3.js" charset="utf-8"></script>
 <script src="/vendor/d3-tip/index.js" charset="utf-8"></script>
 <script src="/js/app.js" charset="utf-8"></script>
 <script>
+//housing.auth.hostname = "http://localhost:8080";
 // Google API callbacks don't work with namespaces
 function gapiCallback() {
     housing.auth.init();

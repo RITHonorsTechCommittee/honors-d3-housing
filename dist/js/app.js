@@ -45,6 +45,8 @@ housing.auth.clientId = '180343920180-41f9qsqdcf9it1poolqtqages644lgs3.apps.goog
 
 housing.auth.scopes = 'https://www.googleapis.com/auth/userinfo.email';
 
+housing.auth.hostname = 'https://rithonorshousing.appspot.com';
+
 housing.auth.init = function() {
     var apisToLoad;
     var loadCallback = function() {
@@ -54,7 +56,7 @@ housing.auth.init = function() {
     };
 
     apisToLoad = 2;
-    gapi.client.load('housing', 'v1', loadCallback, "https://rithonorshousing.appspot.com/_ah/api");
+    gapi.client.load('housing', 'v1', loadCallback, housing.auth.hostname+"/_ah/api");
     gapi.client.load('oauth2', 'v2', loadCallback);
 };
 
@@ -72,7 +74,7 @@ housing.auth.result = function(result) {
         // indicating whether or not the user is signed in
         housing.app((result && !result.error));
     } else {
-        // fallback if housing app not defined?
+        housing.client.displayError("The application code is missing. Please contact the developers");
     }
 }
 
@@ -81,7 +83,8 @@ housing.auth.click = function(evt) {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
         scope: housing.auth.scopes,
-        immediate: false
+        immediate: false,
+        authuser: "",
     }, housing.auth.result);
     return false;
 }
@@ -91,9 +94,12 @@ var housing = housing || {};
 
 housing.client = housing.client || {};
 
+housing.client.serverError = "A server error has occurred. Please contact the developers of this website and report an error with ";
+housing.client.unauthorizedError = "You are not authorized to register for housing. Please check that you are logged in with an RIT Google account";
+
 housing.client.load = function(svg,nav,floor) {
     // Load the floor. 
-    if(window.gapi && gapi.client && gapi.client.housing) {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.rooms) {
         // If the Google APIs are available, then get the list of
         // available rooms through them.
         gapi.client.housing.housing.rooms().then(
@@ -102,9 +108,19 @@ housing.client.load = function(svg,nav,floor) {
                     housing.init(svg,nav,floors);
                     housing.load(floors,floor,svg);
                 },
-                function(err) {
-                    console.log(err);
-                    //TODO: identify error and handle appropriately
+                function(resp) {
+                    var code = resp.result.error.code;
+                    var msg = resp.result.error.message;
+                    if(code < 500){
+                        if(code == 401){
+                            housing.client.displayError(housing.client.unauthorizedError,resp.result.error);
+                            window.setTimeout(housing.app,0,false);
+                        } else {
+                            housing.client.displayError(msg,resp.result.error);
+                        }
+                    } else {
+                        housing.client.displayError(housing.client.serverError+"'rooms()'");
+                    }
                 });
     } else {
         // display example rooms if api not available
@@ -118,13 +134,78 @@ housing.client.load = function(svg,nav,floor) {
 };
 
 housing.client.current = function() {
-    //TODO: use gapi.client.housing.housing.current if available
-    return {
-        then: function(fcnSuccess,fcnFailure){
-            fcnFailure({"result":{"error": "Not Implemented"}});
-        }
-    };
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.current) {
+        return gapi.client.housing.housing.current();
+    } else {
+        return {
+            then: function(fcnSuccess,fcnFailure){
+                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
+            }
+        };
+    }
 };
+
+housing.client.reserve = function(num) {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.reserve) {
+        return gapi.client.housing.housing.reserve({"number":num});
+    } else {
+        return {
+            then: function(fcnSuccess,fcnFailure){
+                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
+            }
+        };
+    }
+};
+
+housing.client.deleteReservation = function() {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.deleteReservation) {
+        return gapi.client.housing.housing.deleteReservation();
+    } else {
+        return {
+            then: function(fcnSuccess,fcnFailure){
+                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
+            }
+        };
+    }
+};
+
+housing.client.displayError = function (msg,log) {
+    if(msg){
+        //TODO: do better than this.
+        //alert(msg);
+        $("#errorModal .message").html(msg);
+        $("#errorModal").foundation('reveal', 'open');
+    }
+    if(log && window.console && console.log){
+        console.log(log);
+    }
+}
+
+housing.client.errorHelper = function (error,source) {
+    var msg = "";
+    if( error.code == 401 ) {
+        msg = housing.client.unauthorizedError;
+        if(error.message.contains('@')){
+            msg += "<br><br>"+error.message;
+        }
+        window.setTimeout(housing.app,0,false);
+    } else {
+        if( error.code >= 500 ) {
+            msg = housing.client.serverError;
+            if(source){
+                msg += "'"+source+"'";
+            } else {
+                msg += "'generic'";
+            }
+        } else {
+            if(window.console && console.warn){
+                console.warn("housing.client.unauthorized called with unrecognized error!");
+            }
+            msg = error.message;
+        }
+    }
+    housing.client.displayError(msg,error);
+}
 
 // Software developed by Reginald Pierce for the RIT Honors Program
 // Redistribution or use in any form without express permission
@@ -192,16 +273,24 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
         var clearReservation = otherbuttons.append("li")
             .append("a")
                 .attr("href","#")
-                .classed("button alert disabled clear-reservation",true)
+                .classed("button alert clear-reservation",true)
                 .text("Clear Reservation")
                 .on("click",housing.clearReservation);
 
         // Start loading current reservation
+        //TODO: don't remove loading indication until this is done.
         housing.client.current().then(function(resp){
             clearReservation.classed("disabled",false);
             currentReservation.text(resp.result.roomNumber);
         },function(resp){
-            currentReservation.text("None");
+            switch(resp.result.error.code){
+                case 401: 
+                    housing.client.errorHelper(resp.result.error,'current()'); break;
+                case 404: case 600: 
+                    clearReservation.classed("disabled",true); currentReservation.text("None"); break;
+                default:
+                    housing.client.displayError(housing.client.serverError+"'current()'",resp.result.error); break;
+            }
         });
     }
 };
@@ -307,15 +396,31 @@ housing.load = function(data,floor,d3svg) {
  * Handles clicks on rooms
  */
 housing.clickRoom = function(d,i) {
-    //TODO: this is just for demo purposes
-    var data = housing.currentData;
-    for( var k = 0; k < data.length; k += 1 ) {
-        if( data[k].number == housing.currentFloor ) {
-            data[k].rooms[i].occupants = d.occupants + 1;
-            housing.load(data,housing.currentFloor,housing.d3svg);
+    if( housing.auth && housing.client ) {
+        // reserve a room
+        housing.client.reserve(d.number).then(function(resp){
+            housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
+            d3.select('.current-reservation').text(d.number);
+        },function(resp){
+            housing.client.errorHelper(resp.result.error,'reserve()');
+        },this);
+        
+        //TODO: loading indicator
+    } else {
+        // this is just for demo purposes
+        // loop through the data until the clicked room is found
+        // and add one to the occupants number. This simulates
+        // new data being returned from the housing.client.reserve
+        // method.
+        var data = housing.currentData;
+        for( var k = 0; k < data.length; k += 1 ) {
+            if( data[k].number == housing.currentFloor ) {
+                data[k].rooms[i].occupants = d.occupants + 1;
+                break;
+            }
         }
+        housing.load(data,housing.currentFloor,housing.d3svg);
     }
-    //TODO: hook into client.js
 }
 
 /**
@@ -324,8 +429,18 @@ housing.clickRoom = function(d,i) {
 housing.clearReservation = function(d,i) {
     // only do stuff if the button is enabled
     if(!d3.select(".clear-reservation").classed("disabled")){
-        //TODO: clear reservation
-        alert("Not implemented");
+        if( housing.auth && housing.client ) {
+            //TODO: loading indication
+            housing.client.deleteReservation().then(function(resp){
+                housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
+                d3.select('.current-reservation').text('None');
+                d3.select('.clear-reservation').classed("disabled",true);
+            },function(resp){
+                housing.client.errorHelper(resp.result.error,'deleteReservation()');
+            },this);
+        } else {
+            alert("API not available");
+        }
     }
     d3.event.preventDefault();
 }
