@@ -47,7 +47,7 @@ module.exports = function(grunt) {
       dist: {
         files: [
           {src: 'index.html', dest: 'dist/'},
-          {src: 'css/app.css', dest: 'dist/'},
+          {src: 'css/**/*', dest: 'dist/', expand:true},
           {src: 'img/*', dest: 'dist/', expand:true},
           {expand: true, cwd: 'bower_components/', src: ['d3/d3.js', 'd3-tip/index.js'], dest: 'dist/vendor/'}
         ]
