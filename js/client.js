@@ -14,7 +14,7 @@ housing.client.load = function(svg,nav,floor) {
         gapi.client.housing.housing.rooms().then(
                 function(resp) {
                     var floors = resp.result.floors;
-                    housing.init(svg,nav,floors);
+                    housing.init(svg,nav,floors,true);
                     housing.load(floors,floor,svg);
                 },
                 function(resp) {
