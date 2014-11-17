@@ -24,8 +24,7 @@ housing.app = function(authorized) {
             .attr("width",768)
             .attr("height",609);
 
-        // The initial floor number is hardcoded to 4b for simplicity
-        housing.client.load(svg,nav,"4b");
+        housing.client.load(svg,nav);
     } else {
         // If not signed in, clear navigation and insert signin button.
         nav.html(null);

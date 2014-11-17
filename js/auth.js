@@ -26,7 +26,8 @@ housing.auth.check = function() {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
         scope: housing.auth.scopes,
-        immediate: true
+        immediate: true,
+        hd: "g.rit.edu",
     }, housing.auth.result);
 };
 
@@ -38,6 +39,22 @@ housing.auth.result = function(result) {
     } else {
         housing.client.displayError("The application code is missing. Please contact the developers");
     }
+
+    // Get the user's email
+    gapi.client.oauth2.userinfo.get().then(function(resp){
+        // Put the email in the top bar so users can see which account they are logged in under
+        d3.select(".username").html(null)
+            .append("a")
+            .on("click", housing.auth.click)
+            .attr("title","Click to change accounts")
+            .text(resp.result.email);
+    },function(resp){
+        if(window.console && console.log){
+            console.log(resp.result.error);
+        }
+        // Restart app in unauthenticated mode.
+        setTimeout(housing.app,0,false);
+    });
 }
 
 

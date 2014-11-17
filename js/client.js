@@ -14,6 +14,9 @@ housing.client.load = function(svg,nav,floor) {
         gapi.client.housing.housing.rooms().then(
                 function(resp) {
                     var floors = resp.result.floors;
+                    if(floor == undefined) {
+                        floor = floors[0].number;
+                    }
                     housing.init(svg,nav,floors,true);
                     housing.load(floors,floor,svg);
                 },
@@ -80,9 +83,11 @@ housing.client.deleteReservation = function() {
 
 housing.client.displayError = function (msg,log) {
     if(msg){
-        //TODO: do better than this.
-        //alert(msg);
+        // hide loading icon, if applicable
+        $("#loading").hide();
+        // update error message
         $("#errorModal .message").html(msg);
+        // show error dialog
         $("#errorModal").foundation('reveal', 'open');
     }
     if(log && window.console && console.log){
