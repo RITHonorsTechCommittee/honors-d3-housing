@@ -64,7 +64,8 @@ housing.auth.check = function() {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
         scope: housing.auth.scopes,
-        immediate: true
+        immediate: true,
+        hd: "g.rit.edu",
     }, housing.auth.result);
 };
 
@@ -76,6 +77,15 @@ housing.auth.result = function(result) {
     } else {
         housing.client.displayError("The application code is missing. Please contact the developers");
     }
+    gapi.client.oauth2.userinfo.get().then(function(resp){
+        d3.select(".username").html(null)
+            .append("a")
+            .on("click", housing.auth.click)
+            .attr("title","Click to change accounts")
+            .text(resp.result.email);
+    },function(resp){
+        // I don't really know what to do if we can't get the user's email...
+    });
 }
 
 
