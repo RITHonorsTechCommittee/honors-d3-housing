@@ -4,8 +4,10 @@
   height: 51px;
 }
 
-.top-bar .name h1, .top-bar img {
+.top-bar .name h1, .top-bar img, .top-bar li {
   height: 51px; }
+  .top-bar li a {
+    height: 100%; }
 
 .top-bar .name h1 a {
   display: inline;
