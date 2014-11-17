@@ -39,14 +39,21 @@ housing.auth.result = function(result) {
     } else {
         housing.client.displayError("The application code is missing. Please contact the developers");
     }
+
+    // Get the user's email
     gapi.client.oauth2.userinfo.get().then(function(resp){
+        // Put the email in the top bar so users can see which account they are logged in under
         d3.select(".username").html(null)
             .append("a")
             .on("click", housing.auth.click)
             .attr("title","Click to change accounts")
             .text(resp.result.email);
     },function(resp){
-        // I don't really know what to do if we can't get the user's email...
+        if(window.console && console.log){
+            console.log(resp.result.error);
+        }
+        // Restart app in unauthenticated mode.
+        setTimeout(housing.app,0,false);
     });
 }
 
