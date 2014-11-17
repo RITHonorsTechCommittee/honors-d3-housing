@@ -181,6 +181,7 @@ housing.load = function(data,floor,d3svg) {
                 .attr("dy",housing.style.titleOffset);
         }
     }
+    $("#loading").hide();
 };
 
 /**
@@ -196,8 +197,7 @@ housing.clickRoom = function(d,i) {
         },function(resp){
             housing.client.errorHelper(resp.result.error,'reserve()');
         },this);
-        
-        //TODO: loading indicator
+        $("#loading").show();
     } else {
         // this is just for demo purposes
         // loop through the data until the clicked room is found
@@ -222,7 +222,6 @@ housing.clearReservation = function(d,i) {
     // only do stuff if the button is enabled
     if(!d3.select(".clear-reservation").classed("disabled")){
         if( housing.auth && housing.client ) {
-            //TODO: loading indication
             housing.client.deleteReservation().then(function(resp){
                 housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
                 d3.select('.current-reservation').text('None');
@@ -230,6 +229,7 @@ housing.clearReservation = function(d,i) {
             },function(resp){
                 housing.client.errorHelper(resp.result.error,'deleteReservation()');
             },this);
+            $("#loading").show();
         } else {
             alert("API not available");
         }
