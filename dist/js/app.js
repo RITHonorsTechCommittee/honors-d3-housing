@@ -77,14 +77,21 @@ housing.auth.result = function(result) {
     } else {
         housing.client.displayError("The application code is missing. Please contact the developers");
     }
+
+    // Get the user's email
     gapi.client.oauth2.userinfo.get().then(function(resp){
+        // Put the email in the top bar so users can see which account they are logged in under
         d3.select(".username").html(null)
             .append("a")
             .on("click", housing.auth.click)
             .attr("title","Click to change accounts")
             .text(resp.result.email);
     },function(resp){
-        // I don't really know what to do if we can't get the user's email...
+        if(window.console && console.log){
+            console.log(resp.result.error);
+        }
+        // Restart app in unauthenticated mode.
+        setTimeout(housing.app,0,false);
     });
 }
 
@@ -276,14 +283,14 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
         var currentReservation = 
             otherbuttons.append("li")
                 .append("a")
-                    .classed("button alert disabled",true)
+                    .classed("button alert",true)
                     .text("Current Reservation: ")
                     .append("span")
                         .classed("current-reservation",true);
         var clearReservation = otherbuttons.append("li")
             .append("a")
                 .attr("href","#")
-                .classed("button alert clear-reservation",true)
+                .classed("button alert clear-reservation disabled",true)
                 .text("Clear Reservation")
                 .on("click",housing.clearReservation);
 
@@ -320,7 +327,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
 housing.load = function(data,floor,d3svg) {
     console.log("Loading Floor "+floor);
     // Disable the button for the current floor
-    d3.selectAll("a.disabled").classed("disabled",false);
+    d3.selectAll(".floors .disabled").classed("disabled",false);
     d3.select(".floors [name=floor"+floor+"]").classed("disabled",true);
     
     // Store parameters for use by click handlers
@@ -411,6 +418,7 @@ housing.clickRoom = function(d,i) {
         housing.client.reserve(d.number).then(function(resp){
             housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
             d3.select('.current-reservation').text(d.number);
+            d3.select('.clear-reservation').classed('disabled',false);
         },function(resp){
             housing.client.errorHelper(resp.result.error,'reserve()');
         },this);
