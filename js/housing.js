@@ -23,7 +23,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
     }
     if(enableTooltip){
         housing.tooltip = d3.tip()
-            .attr("class","tooltip")
+            .attr("class","d3-tip")
             .html(housing.style.tooltip);
         d3svg.call(housing.tooltip);
     }
@@ -260,7 +260,11 @@ housing.style = {
     r: function(d){ return 4*Math.sqrt(Math.abs(10.5*d.capacity - 1)); },
     endAngle: function(d){ return 6.28319 * d.occupants / d.capacity; },
     tooltip: function(d) {
-        return "<strong>"+d.number+"</strong>";
+        if(d && d.occupantNames){
+            return d.occupantNames.join("<br>");
+        } else {
+            return "Nobody";
+        }
     },
     title: function(d) {
         return d.number;

@@ -124,7 +124,7 @@ housing.client.load = function(svg,nav,floor) {
                     if(floor == undefined) {
                         floor = floors[0].number;
                     }
-                    housing.init(svg,nav,floors);
+                    housing.init(svg,nav,floors,true);
                     housing.load(floors,floor,svg);
                 },
                 function(resp) {
@@ -190,9 +190,11 @@ housing.client.deleteReservation = function() {
 
 housing.client.displayError = function (msg,log) {
     if(msg){
-        //TODO: do better than this.
-        //alert(msg);
+        // hide loading icon, if applicable
+        $("#loading").hide();
+        // update error message
         $("#errorModal .message").html(msg);
+        // show error dialog
         $("#errorModal").foundation('reveal', 'open');
     }
     if(log && window.console && console.log){
@@ -251,7 +253,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
     }
     if(enableTooltip){
         housing.tooltip = d3.tip()
-            .attr("class","tooltip")
+            .attr("class","d3-tip")
             .html(housing.style.tooltip);
         d3svg.call(housing.tooltip);
     }
@@ -409,6 +411,7 @@ housing.load = function(data,floor,d3svg) {
                 .attr("dy",housing.style.titleOffset);
         }
     }
+    $("#loading").hide();
 };
 
 /**
@@ -424,8 +427,7 @@ housing.clickRoom = function(d,i) {
         },function(resp){
             housing.client.errorHelper(resp.result.error,'reserve()');
         },this);
-        
-        //TODO: loading indicator
+        $("#loading").show();
     } else {
         // this is just for demo purposes
         // loop through the data until the clicked room is found
@@ -450,7 +452,6 @@ housing.clearReservation = function(d,i) {
     // only do stuff if the button is enabled
     if(!d3.select(".clear-reservation").classed("disabled")){
         if( housing.auth && housing.client ) {
-            //TODO: loading indication
             housing.client.deleteReservation().then(function(resp){
                 housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
                 d3.select('.current-reservation').text('None');
@@ -458,6 +459,7 @@ housing.clearReservation = function(d,i) {
             },function(resp){
                 housing.client.errorHelper(resp.result.error,'deleteReservation()');
             },this);
+            $("#loading").show();
         } else {
             alert("API not available");
         }
@@ -488,7 +490,11 @@ housing.style = {
     r: function(d){ return 4*Math.sqrt(Math.abs(10.5*d.capacity - 1)); },
     endAngle: function(d){ return 6.28319 * d.occupants / d.capacity; },
     tooltip: function(d) {
-        return "<strong>"+d.number+"</strong>";
+        if(d && d.occupantNames){
+            return d.occupantNames.join("<br>");
+        } else {
+            return "Nobody";
+        }
     },
     title: function(d) {
         return d.number;

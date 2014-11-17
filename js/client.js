@@ -17,7 +17,7 @@ housing.client.load = function(svg,nav,floor) {
                     if(floor == undefined) {
                         floor = floors[0].number;
                     }
-                    housing.init(svg,nav,floors);
+                    housing.init(svg,nav,floors,true);
                     housing.load(floors,floor,svg);
                 },
                 function(resp) {
