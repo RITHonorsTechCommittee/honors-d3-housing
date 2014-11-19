@@ -283,53 +283,35 @@ housing.style = {
         }
     },
     bgpath: function(d) {
-        switch(d.bgpath) {
-            case "0":
-                return "M26,50 v-75  h-52  v75  Z"; 
-             case "1":
-                return "M39,43 v-78  h-78  v78  Z";
-             case "2":
-                return "M39,50 v-75  h-78  v75  Z";
-             case "3":
-                return "M52,32 v-58  h-103 v58  Z";
-             case "4":
-                return "M51,63 v-113 h-102 v113 Z";
-             case "5":
-                return "M38,41 v-75  h-76  v75  Z";
-             case "6":
-                return "M26,37 v-75  h-51  v75  Z";
-             case "7":
-                return "M25,37 v-75  h-48  v75  Z";
-             case "8":
-                return "M40,37 v-75  h-80  v75  Z";
-             case "9":
-                return "M48,62 v-58  h51 v-59 h-153 v117 Z";
-             case "10":
-                return "M39,62 v-106 h-78  v106 Z";
-             case "11":
-                return "M51,60 v-110 h-102 v110 Z";
-             case "12":
-                return "M51,31 v-58  h-102 v58  Z";
-             case "13":
-                return "M53,46 v-75  h-105 v75  Z";
-             case "14":
-                return "M26,44 v-75  h-51  v75  Z";
-             case "15":
-                return "M26,38 v-75  h-51  v75  Z";
-             case "16":
-                return "M38,38 v-75  h-76  v75  Z"; 
-             case "17":
-                return "M26,38 v-75  h-52  v75  Z";
-             case "18":
-                return "M50,60 v-118 h-102 v118 Z";
-             case "19":
-                return "M38,45 v-75  h-76  v75  Z";
-             case "20":
-                return "M52,32 v-60  h-103 v60  Z"; 
-             default: 
-                return d.bgpath;
-         }
-    }
+        if(housing.style.paths.hasOwnProperty(d.bgpath)) {
+            return housing.style.paths[d.bgpath];
+        } else {
+            return d.bgpath;
+        }
+    },
+    paths: {
+        "0": "M26,50 v-75  h-52  v75  Z", 
+        "1": "M39,43 v-78  h-78  v78  Z",
+        "2": "M39,50 v-75  h-78  v75  Z",
+        "3": "M52,32 v-58  h-103 v58  Z",
+        "4": "M51,63 v-113 h-102 v113 Z",
+        "5": "M38,41 v-75  h-76  v75  Z",
+        "6": "M26,37 v-75  h-51  v75  Z",
+        "7": "M25,37 v-75  h-48  v75  Z",
+        "8": "M40,37 v-75  h-80  v75  Z",
+        "9": "M48,62 v-58  h51 v-59 h-153 v117 Z",
+        "10": "M39,62 v-106 h-78  v106 Z",
+        "11": "M51,60 v-110 h-102 v110 Z",
+        "12": "M51,31 v-58  h-102 v58  Z",
+        "13": "M53,46 v-75  h-105 v75  Z",
+        "14": "M26,44 v-75  h-51  v75  Z",
+        "15": "M26,38 v-75  h-51  v75  Z",
+        "16": "M38,38 v-75  h-76  v75  Z", 
+        "17": "M26,38 v-75  h-52  v75  Z",
+        "18": "M50,60 v-118 h-102 v118 Z",
+        "19": "M38,45 v-75  h-76  v75  Z",
+        "20": "M52,32 v-60  h-103 v60  Z", 
+    },
 };
 
 // Allow for statements of the form housing.style.color.empty
