@@ -279,7 +279,7 @@ housing.style = {
         if(d && d.occupantNames){
             return d.occupantNames.join("<br>");
         } else {
-            return "Nobody";
+            return null;
         }
     },
     title: function(d) {
