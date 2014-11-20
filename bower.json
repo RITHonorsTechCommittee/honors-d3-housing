@@ -1,6 +1,6 @@
 {
   "name": "honors-d3-housing",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "main": "dist/index.html",
   "homepage": "https://github.com/regdoug/honors-d3-housing",
   "authors": [
