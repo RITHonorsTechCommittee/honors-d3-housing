@@ -145,7 +145,10 @@ housing.client.load = function(svg,nav,floor) {
         // display example rooms if api not available
         d3.json("/spec.json",function(err,jsonobj){
             if(jsonobj){
-                housing.init(svg,nav,jsonobj.floors,false);
+                if(floor == undefined) {
+                    floor = jsonobj.floors[0].number;
+                }
+                housing.init(svg,nav,jsonobj.floors,true);
                 housing.load(jsonobj.floors,floor,svg);
             }
         });
@@ -376,7 +379,7 @@ housing.load = function(data,floor,d3svg) {
 
             // Allow for tooltips if defined.
             if(housing.tooltip){
-                group.on("mouseover",housing.tooltip.show)
+                group.on("mouseover",housing.showTooltip)
                     .on("mouseout",housing.tooltip.hide);
             }
 
@@ -468,6 +471,22 @@ housing.clearReservation = function(d,i) {
 }
 
 /**
+ * Handles tooltip mouseover events
+ *
+ * If housing.tooltip.show is called directly from the onmouseover event, the
+ * tooltip will show up over the element directly under the mouse.  By intercepting
+ * the event, we are able to direct d3-tip to display the tooltip over the parent
+ * <g> element.
+ */
+housing.showTooltip = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var elem = d3.event.target;
+    args.push(elem.parentNode);
+
+    housing.tooltip.show.apply(this,args);
+}
+
+/**
  * The style namespace contains functions to style d3 elements
  */
 housing.style = {
@@ -493,7 +512,7 @@ housing.style = {
         if(d && d.occupantNames){
             return d.occupantNames.join("<br>");
         } else {
-            return "Nobody";
+            return null;
         }
     },
     title: function(d) {
