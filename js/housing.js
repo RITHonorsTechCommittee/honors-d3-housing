@@ -146,7 +146,7 @@ housing.load = function(data,floor,d3svg) {
 
             // Allow for tooltips if defined.
             if(housing.tooltip){
-                group.on("mouseover",housing.tooltip.show)
+                group.on("mouseover",housing.showTooltip)
                     .on("mouseout",housing.tooltip.hide);
             }
 
@@ -238,6 +238,22 @@ housing.clearReservation = function(d,i) {
 }
 
 /**
+ * Handles tooltip mouseover events
+ *
+ * If housing.tooltip.show is called directly from the onmouseover event, the
+ * tooltip will show up over the element directly under the mouse.  By intercepting
+ * the event, we are able to direct d3-tip to display the tooltip over the parent
+ * <g> element.
+ */
+housing.showTooltip = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var elem = d3.event.target;
+    args.push(elem.parentNode);
+
+    housing.tooltip.show.apply(this,args);
+}
+
+/**
  * The style namespace contains functions to style d3 elements
  */
 housing.style = {
@@ -263,7 +279,7 @@ housing.style = {
         if(d && d.occupantNames){
             return d.occupantNames.join("<br>");
         } else {
-            return "Nobody";
+            return null;
         }
     },
     title: function(d) {

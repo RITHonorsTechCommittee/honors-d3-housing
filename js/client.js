@@ -38,7 +38,10 @@ housing.client.load = function(svg,nav,floor) {
         // display example rooms if api not available
         d3.json("/spec.json",function(err,jsonobj){
             if(jsonobj){
-                housing.init(svg,nav,jsonobj.floors,false);
+                if(floor == undefined) {
+                    floor = jsonobj.floors[0].number;
+                }
+                housing.init(svg,nav,jsonobj.floors,true);
                 housing.load(jsonobj.floors,floor,svg);
             }
         });
