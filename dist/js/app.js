@@ -32,6 +32,7 @@ housing.app = function(authorized) {
             .classed("button",true)
             .text("Sign In")
             .on("click",housing.auth.click);
+        $("#loading").hide();
     }
 }
 
