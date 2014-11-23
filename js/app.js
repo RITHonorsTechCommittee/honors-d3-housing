@@ -32,6 +32,8 @@ housing.app = function(authorized) {
             .classed("button",true)
             .text("Sign In")
             .on("click",housing.auth.click);
+        // message for IE users
+        nav.append("p").text("Note: there is a current bug with Google Sign In and Internet Explorer.  If you are using Internet Explorer and you end up with a blank window after sigining in, close the window and click Sign In again.");
         $("#loading").hide();
     }
 }
