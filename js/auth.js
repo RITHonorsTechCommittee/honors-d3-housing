@@ -1,4 +1,6 @@
-
+/**
+* Establishes a connection to the Google Endpoints server
+*/
 var housing = housing || {};
 
 housing.auth = housing.auth || {};
@@ -9,6 +11,9 @@ housing.auth.scopes = 'https://www.googleapis.com/auth/userinfo.email';
 
 housing.auth.hostname = 'https://rithonorshousing.appspot.com';
 
+/**
+* Performs a check when all apis are loaded
+*/
 housing.auth.init = function() {
     var apisToLoad;
     var loadCallback = function() {
@@ -22,6 +27,11 @@ housing.auth.init = function() {
     gapi.client.load('oauth2', 'v2', loadCallback);
 };
 
+/**
+* Checks if the user is logged in already. Will give precedence to RIT accounts
+* 
+* Passes credentials to housing.auth.result
+*/
 housing.auth.check = function() {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
@@ -31,6 +41,9 @@ housing.auth.check = function() {
     }, housing.auth.result);
 };
 
+/**
+* Starts the app. If the user is logged in, it puts their email in the title bar.
+*/
 housing.auth.result = function(result) {
     if(housing.app) {
         // Start the housing app with a boolean
@@ -58,6 +71,9 @@ housing.auth.result = function(result) {
 }
 
 
+/**
+* Event handler that executes when the user clicks the sign in/sign out button
+*/
 housing.auth.click = function(evt) {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
