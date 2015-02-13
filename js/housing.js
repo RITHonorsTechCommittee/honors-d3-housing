@@ -12,7 +12,10 @@ var housing = housing || {};
  * Currently this function sets up tooltips for the data
  * and creates a navigation element.
  *
- * @param d3svg An SVG element in which the data will be drawn.
+ * @param d3svg 	 An SVG element in which the data will be drawn.
+ * @param nav   	 An HTML element where navigation buttons are placed
+ * @param data  	 A JSON element containing the rooms and floors
+ * @param enableTooltip  A boolean indicating whether to show a tool tip, default false
  */
 housing.init = function(d3svg,nav,data,enableTooltip) {
     console.log("Initializing Housing App")
@@ -22,6 +25,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
         enableTooltip = false;
     }
     if(enableTooltip){
+	//set up the tool tip
         housing.tooltip = d3.tip()
             .attr("class","d3-tip")
             .html(housing.style.tooltip);
