@@ -1,5 +1,45 @@
 // Ensure namespace housing exists
 var housing = housing || {};
+housing.admin = housing.admin || {};
+
+/**
+ * housing.app
+ *
+ * This is the entry point for the housing selection application.
+ * This function sets up elements on the page for the housing library
+ * functions in housing.js so that changes can be made to the page
+ * template HTML without interfering with the operation of the
+ * housing.js library.
+ */
+housing.app = function(authorized) {
+    var nav = d3.select("#floornav");
+
+    if(authorized) {
+        nav.html(null);
+        var row = d3.select("#administration")
+            .html(null)
+            .append("div")
+                .classed("row",true);
+
+        housing.admin.load(row, nav);
+    } else {
+        // If not signed in, clear navigation and insert signin button.
+        nav.html(null);
+        nav.append("a")
+            .classed("button",true)
+            .text("Sign In")
+            .on("click",housing.auth.click);
+        // message for IE users
+        nav.append("p").text("Note: there is a current bug with Google Sign In and Internet Explorer.  If you are using Internet Explorer and you end up with a blank window after sigining in, close the blank window and click Sign In again.");
+        $("#loading").hide();
+    }
+}
+
+housing.admin.load = function(row, nav) {
+}
+
+// Ensure namespace housing exists
+var housing = housing || {};
 
 /**
  * housing.app
@@ -38,7 +78,9 @@ housing.app = function(authorized) {
     }
 }
 
-
+/**
+* Establishes a connection to the Google Endpoints server
+*/
 var housing = housing || {};
 
 housing.auth = housing.auth || {};
@@ -49,6 +91,9 @@ housing.auth.scopes = 'https://www.googleapis.com/auth/userinfo.email';
 
 housing.auth.hostname = 'https://rithonorshousing.appspot.com';
 
+/**
+* Performs a check when all apis are loaded
+*/
 housing.auth.init = function() {
     var apisToLoad;
     var loadCallback = function() {
@@ -62,6 +107,11 @@ housing.auth.init = function() {
     gapi.client.load('oauth2', 'v2', loadCallback);
 };
 
+/**
+* Checks if the user is logged in already. Will give precedence to RIT accounts
+* 
+* Passes credentials to housing.auth.result
+*/
 housing.auth.check = function() {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
@@ -71,6 +121,9 @@ housing.auth.check = function() {
     }, housing.auth.result);
 };
 
+/**
+* Starts the app. If the user is logged in, it puts their email in the title bar.
+*/
 housing.auth.result = function(result) {
     if(housing.app) {
         // Start the housing app with a boolean
@@ -98,6 +151,9 @@ housing.auth.result = function(result) {
 }
 
 
+/**
+* Event handler that executes when the user clicks the sign in/sign out button
+*/
 housing.auth.click = function(evt) {
     gapi.auth.authorize({
         client_id: housing.auth.clientId,
@@ -248,7 +304,10 @@ var housing = housing || {};
  * Currently this function sets up tooltips for the data
  * and creates a navigation element.
  *
- * @param d3svg An SVG element in which the data will be drawn.
+ * @param d3svg 	 An SVG element in which the data will be drawn.
+ * @param nav   	 An HTML element where navigation buttons are placed
+ * @param data  	 A JSON element containing the rooms and floors
+ * @param enableTooltip  A boolean indicating whether to show a tool tip, default false
  */
 housing.init = function(d3svg,nav,data,enableTooltip) {
     console.log("Initializing Housing App")
@@ -258,6 +317,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
         enableTooltip = false;
     }
     if(enableTooltip){
+	//set up the tool tip
         housing.tooltip = d3.tip()
             .attr("class","d3-tip")
             .html(housing.style.tooltip);
