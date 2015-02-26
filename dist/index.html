@@ -8,6 +8,12 @@
   <link rel=stylesheet href="/css/fonts/foundation-icons.css">
   <link rel=stylesheet href="/css/app.css">
   <link rel="shortcut icon" href="/img/logo.png">
+  <style type="text/css">
+    #closed {
+        text-align: center;
+        margin-top: 10%;
+    }
+  </style>
 </head>
 <body>
 <!--  BEGIN NAVIGATION STUFF  -->
@@ -73,64 +79,10 @@
     </aside>
   <!-- END OFF CANVAS MENU -->
 <!--  END NAVIGATION STUFF  -->
-
-<!-- BEGIN HOUSING SELECTION PART -->
-    <div class="row">
-      <section>
-        <h1>Honors Housing Selection</h1>
-        <h3>Pick a Floor and Click a Room To Reserve It <a class="toggle-help" href="#" >(?)</a></h3>
-        </script>
-        <div id="instructions">
-          <div id="instructions-inner">
-            <h2>Gibson Hall Sign Up Instructions</h2>
-            <ol>
-              <li>
-                Members that wish to live in Honors housing for the 2015-2016 academic year
-                must go online to <a href="http://myhousing.rit.edu">myhousing.rit.edu</a>
-                to register for Housing Selection Phase II sometime between December 1, 2014 and
-                December 7, 2014.  Members must choose Honors Housing as one of their housing options.
-              </li>
-              <li>
-                 After completing the online registration at <a href="http://myhousing.rit.edu">myhousing.rit.edu</a>, members must
-                 log in to this website using their <a href="http://google.rit.edu/">RIT Google account</a> information and reserve
-                 the room they wish to live in for the 2015-2016 academic year.
-                <ul>
-                  <li>
-                    To reserve a room on this website, simply click on the room you wish to reserve.  The room must have available space.
-                    Empty rooms are represented with entirely green circles.  Occupants are represented by blue sections of the circle, and a
-                    full room is shown with a red circle.
-                  </li>
-                </ul>
-              </li>
-              <li>If you do not sign up in <strong>both</strong> systems, you <strong>will not</strong> be placed in Gibson.</li>
-                </ul>
-              </li>
-              <li>
-                If you would like a single, sign up on the roster in a double, then email
-                <a href="mailto:honors@rit.edu">honors@rit.edu</a> to request a single. Single rooms
-                have an added cost and are assigned on a first come first serve basis.
-              </li>
-            </ol>
-            <input type="button" value="Got it!" class="toggle-help" />
-          </div>
-        </div>
-      </section>
-      <section>
-          <div id="loading">
-            <ul class="button-group loading-screen"><li class="fixed-center loading"><i class="load-anim fi-widget"></i></li></ul>
-            <p class="fixed-center loading-text">Loading...</p>
-          </div>
-          <nav id="floornav" class="button-bar">  
-          </nav>
-        <div id="selection"></div>
-      </section>
-    </div>
-<!-- END HOUSING SELECTION PART -->
-    <div id="errorModal" class="reveal-modal" data-reveal>
-      <h1>Error</h1>
-      <p class="alert message">An error has occurred</p>
-      <a class="close-reveal-modal">&#215;</a>
-    </div>
+  <div id="closed">
+    <h1>:(</h1>
+    <h3>The sign-up period has ended.  Sorry!</h3>
+  </div>
   </div>
 </div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -140,13 +92,7 @@
 <script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation/foundation.reveal.js"></script>
 <script src="/vendor/d3/d3.js" charset="utf-8"></script>
 <script src="/vendor/d3-tip/index.js" charset="utf-8"></script>
-<script src="/js/app.js" charset="utf-8"></script>
 <script>
-//housing.auth.hostname = "http://localhost:8080";
-// Google API callbacks don't work with namespaces
-function gapiCallback() {
-    housing.auth.init();
-}
 
 // Load foundation components
 $(document).foundation({
@@ -155,19 +101,6 @@ $(document).foundation({
         close_on_click: true
     }
 });
-// Load the floor
-if(housing.auth){
-    // do nothing, google apis callback will start app
-}else{
-    housing.app(true);
-}
-</script>
-<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
-<script>
-$(function() {
-  $(".toggle-help").click(function() {
-    $("#instructions").toggleClass("instructions-open");
-  });
-});
+
 </script>
 </body>
