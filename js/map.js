@@ -95,10 +95,7 @@ housing.map.init = function(d3svg,nav,data,enableTooltip) {
                     .classed("disabled",true)
                     .text(function(d){ return "Floor "+d.number; })
                     .on("click", function(d){ 
-                        housing.endpoints.load(d.number).then(
-                            function(floors,floor){
-                                housing.map.load(floor,floors,d3svg);
-                            });
+                        housing.map.load(data, d.number, d3svg);
                         d3.event.preventDefault();
                     });
 
@@ -270,6 +267,7 @@ housing.map.clearReservation = function(d,i) {
     if(!d3.select(".clear-reservation").classed("disabled")){
         if( housing.endpoints ) {
             housing.endpoints.deleteReservation().then(function(resp){
+                housing.map.currentData = resp.result.floors
                 housing.map.load(resp.result.floors,housing.map.currentFloor,housing.map.d3svg);
                 d3.select('.current-reservation').text('None');
                 d3.select('.clear-reservation').classed("disabled",true);

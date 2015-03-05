@@ -145,7 +145,7 @@
 //housing.auth.hostname = "http://localhost:8080";
 // Google API callbacks don't work with namespaces
 function gapiCallback() {
-    housing.auth.init();
+    housing.endpoints.login(housing.map.start);
 }
 
 // Load foundation components
@@ -155,12 +155,6 @@ $(document).foundation({
         close_on_click: true
     }
 });
-// Load the floor
-if(housing.auth){
-    // do nothing, google apis callback will start app
-}else{
-    housing.app(true);
-}
 </script>
 <script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
 <script>
@@ -168,6 +162,10 @@ $(function() {
   $(".toggle-help").click(function() {
     $("#instructions").toggleClass("instructions-open");
   });
+  if( !window.gapi ) {
+      // No google apis, start manually
+      housing.map.start(true);
+  }
 });
 </script>
 </body>

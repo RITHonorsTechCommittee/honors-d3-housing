@@ -110,7 +110,7 @@ housing.endpoints.load = function(floor) {
             gapi.client.housing.housing.rooms().then(
                 function(resp) {
                     if(floor == undefined) {
-                        floor = jsonobj.floors[0].number;
+                        floor = resp.result.floors[0].number;
                     }
                     fcnSuccess(resp.result.floors, floor);
                 },

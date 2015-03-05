@@ -140,15 +140,14 @@
 <script src="/bower_components/foundation/js/foundation/foundation.reveal.js"></script>
 <script src="/bower_components/d3/d3.js" charset="utf-8"></script>
 <script src="/bower_components/d3-tip/index.js" charset="utf-8"></script>
-<script src="/js/housing.js" charset="utf-8"></script>
-<script src="/js/auth.js" charset="utf-8"></script>
-<script src="/js/client.js" charset="utf-8"></script>
+<script src="/js/endpoints.js" charset="utf-8"></script>
+<script src="/js/map.js" charset="utf-8"></script>
 <script src="/js/app.js" charset="utf-8"></script>
 <script>
 //housing.auth.hostname = "http://localhost:8080";
 // Google API callbacks don't work with namespaces
 function gapiCallback() {
-    housing.auth.init();
+    housing.endpoints.login(housing.map.start);
 }
 
 // Load foundation components
@@ -158,12 +157,6 @@ $(document).foundation({
         close_on_click: true
     }
 });
-// Load the floor
-if(housing.auth){
-    // do nothing, google apis callback will start app
-}else{
-    housing.app(true);
-}
 </script>
 <script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
 <script>
@@ -171,6 +164,10 @@ $(function() {
   $(".toggle-help").click(function() {
     $("#instructions").toggleClass("instructions-open");
   });
+  if( !window.gapi ) {
+      // No google apis, start manually
+      housing.map.start(true);
+  }
 });
 </script>
 </body>
