@@ -3,21 +3,63 @@
 // of the RIT Honors Program and Reginald Pierce is strictly
 // prohibited.
 
-// All code is contained in the housing namespace
+// Ensure namespace housing exists
 var housing = housing || {};
+housing.map = housing.map || {};
+
+/**
+ * housing.map.start
+ *
+ * This is the entry point for the housing selection application map view.
+ * This function sets up elements on the page for the housing library
+ * functions in housing.js so that changes can be made to the page
+ * template HTML without interfering with the operation of the
+ * housing.js library.
+ */
+housing.map.start = function(authorized) {
+    // Select active elements of page
+    // These are regions that will be filled by housing.js
+    var nav = d3.select("#floornav");
+
+    if(authorized) {
+        // If authorized, clear the navigation bar and the SVG element
+        nav.html(null);
+        var svg = d3.select("#selection")
+            .html(null)
+            .append("svg")
+            .attr("width",768)
+            .attr("height",609);
+
+        housing.endpoints.load().then(
+            function(floors,floor){
+                housing.map.init(svg,nav,floors,true);
+                housing.map.load(floors,floor,svg);
+            });
+    } else {
+        // If not signed in, clear navigation and insert signin button.
+        nav.html(null);
+        nav.append("a")
+            .classed("button",true)
+            .text("Sign In")
+            .on("click",housing.endpoints.click);
+        // message for IE users
+        nav.append("p").text("Note: there is a current bug with Google Sign In and Internet Explorer.  If you are using Internet Explorer and you end up with a blank window after sigining in, close the window and click Sign In again.");
+        $("#loading").hide();
+    }
+}
     
 /**
- * Starts the housing selection app
+ * housing.map.init
  *
- * Currently this function sets up tooltips for the data
- * and creates a navigation element.
+ * Initializes map view by setting up tooltips for the data
+ * and creating a navigation element.
  *
  * @param d3svg 	 An SVG element in which the data will be drawn.
  * @param nav   	 An HTML element where navigation buttons are placed
  * @param data  	 A JSON element containing the rooms and floors
  * @param enableTooltip  A boolean indicating whether to show a tool tip, default false
  */
-housing.init = function(d3svg,nav,data,enableTooltip) {
+housing.map.init = function(d3svg,nav,data,enableTooltip) {
     console.log("Initializing Housing App")
     // Set up fancy tooltips for the rooms
     if(typeof enableTooltip === "undefined"){
@@ -26,10 +68,10 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
     }
     if(enableTooltip){
 	//set up the tool tip
-        housing.tooltip = d3.tip()
+        housing.map.tooltip = d3.tip()
             .attr("class","d3-tip")
-            .html(housing.style.tooltip);
-        d3svg.call(housing.tooltip);
+            .html(housing.map.style.tooltip);
+        d3svg.call(housing.map.tooltip);
     }
        
     // Create navigation
@@ -53,7 +95,7 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
                     .classed("disabled",true)
                     .text(function(d){ return "Floor "+d.number; })
                     .on("click", function(d){ 
-                        housing.load(data,d.number,d3svg);
+                        housing.map.load(data, d.number, d3svg);
                         d3.event.preventDefault();
                     });
 
@@ -70,55 +112,53 @@ housing.init = function(d3svg,nav,data,enableTooltip) {
                 .attr("href","#")
                 .classed("button alert clear-reservation disabled",true)
                 .text("Clear Reservation")
-                .on("click",housing.clearReservation);
+                .on("click",housing.map.clearReservation);
 
         // Start loading current reservation
         //TODO: don't remove loading indication until this is done.
-        housing.client.current().then(function(resp){
+        housing.endpoints.current().then(function(resp){
             clearReservation.classed("disabled",false);
             currentReservation.text(resp.result.roomNumber);
         },function(resp){
             switch(resp.result.error.code){
                 case 401: 
-                    housing.client.errorHelper(resp.result.error,'current()'); break;
+                    housing.endpoints.errorHelper(resp.result.error,'current()'); break;
                 case 404: case 600: 
                     clearReservation.classed("disabled",true); currentReservation.text("None"); break;
                 default:
-                    housing.client.displayError(housing.client.serverError+"'current()'",resp.result.error); break;
+                    housing.endpoints.displayError(housing.endpoints.serverError+"'current()'",resp.result.error); break;
             }
         });
     }
 };
 
 /**
- * Loads data for a floor
+ * housing.map.load
  *
- * The load function takes JSON data representing a floor
- * plan (with registration information) and displays the
- * data on the provided d3.js SVG element.
+ * Loads a specific floor on the map view.
  *
  * @param data The JSON.  The format should follow from
  *     /tests/sample.json
  * @param floor The floor to render
  * @param d3svg An SVG element in which to draw the data.
  */
-housing.load = function(data,floor,d3svg) {
+housing.map.load = function(data,floor,d3svg) {
     console.log("Loading Floor "+floor);
     // Disable the button for the current floor
     d3.selectAll(".floors .disabled").classed("disabled",false);
     d3.select(".floors [name=floor"+floor+"]").classed("disabled",true);
     
     // Store parameters for use by click handlers
-    housing.d3svg = d3svg;
-    housing.currentFloor = floor;
-    housing.currentData = data;
+    housing.map.d3svg = d3svg;
+    housing.map.currentFloor = floor;
+    housing.map.currentData = data;
     
     // Get floor images
     var floorimgs = d3svg.selectAll("image");
     // update data
     floorimgs.data(data)
          // set visibility base on new data
-        .attr("visibility",housing.style.imgvisibility)
+        .attr("visibility",housing.map.style.imgvisibility)
     
         // add new images if necessary and style them appropriately
         .enter()
@@ -127,8 +167,8 @@ housing.load = function(data,floor,d3svg) {
                 .attr("y",0)
                 .attr("width",768)
                 .attr("height",609)
-                .attr("xlink:href",housing.style.imghref)
-                .attr("visibility",housing.style.imgvisibility);
+                .attr("xlink:href",housing.map.style.imghref)
+                .attr("visibility",housing.map.style.imgvisibility);
                 
     // It is simplest just to remove all circles to make sure they update correctly
     d3svg.selectAll(".circle").remove();
@@ -144,45 +184,45 @@ housing.load = function(data,floor,d3svg) {
             // Each room gets a group (an SVG <g> element) to hold the
             // occupancy indicator and room number
             var group = rooms.enter().append("g")
-                .attr("transform",housing.style.transform)
+                .attr("transform",housing.map.style.transform)
                 .attr("class","circle")
-                .on("click", housing.clickRoom);
+                .on("click", housing.map.clickRoom);
 
             // Allow for tooltips if defined.
-            if(housing.tooltip){
-                group.on("mouseover",housing.showTooltip)
-                    .on("mouseout",housing.tooltip.hide);
+            if(housing.map.tooltip){
+                group.on("mouseover",housing.map.showTooltip)
+                    .on("mouseout",housing.map.tooltip.hide);
             }
 
             // Shade room on mouseover
             group.append("path")
-                .attr("d", housing.style.bgpath)
+                .attr("d", housing.map.style.bgpath)
                 .classed("shading",true)
                 .attr("fill", "black")
                 .attr("opacity", 0);
             
             // Add the base layer of the occupancy indicator
             group.append("circle")
-                .attr("r",housing.style.r)
-                .attr("class",housing.style.color.empty)
+                .attr("r",housing.map.style.r)
+                .attr("class",housing.map.style.color.empty)
                 .attr("stroke","black");
 
             // Create a SVG path specification for an arc that indicates occupancy
             var arc1 = d3.svg.arc()
                 .innerRadius(0)
-                .outerRadius(housing.style.r)
+                .outerRadius(housing.map.style.r)
                 .startAngle(0)
-                .endAngle(housing.style.endAngle);
+                .endAngle(housing.map.style.endAngle);
             // Add the arc path to the group
             group.append("path")
                 .attr("d", arc1)
-                .attr("class",housing.style.color);
+                .attr("class",housing.map.style.color);
 
             // Add the room number (an SVG <text> element)
             group.append("text")
-                .text(housing.style.title)
+                .text(housing.map.style.title)
                 .attr("text-anchor","middle")
-                .attr("dy",housing.style.titleOffset);
+                .attr("dy",housing.map.style.titleOffset);
         }
     }
     $("#loading").hide();
@@ -191,47 +231,48 @@ housing.load = function(data,floor,d3svg) {
 /**
  * Handles clicks on rooms
  */
-housing.clickRoom = function(d,i) {
-    if( housing.auth && housing.client ) {
+housing.map.clickRoom = function(d,i) {
+    if( housing.endpoints && housing.endpoints ) {
         // reserve a room
-        housing.client.reserve(d.number).then(function(resp){
-            housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
+        housing.endpoints.reserve(d.number).then(function(resp){
+            housing.map.load(resp.result.floors,housing.map.currentFloor,housing.map.d3svg);
             d3.select('.current-reservation').text(d.number);
             d3.select('.clear-reservation').classed('disabled',false);
         },function(resp){
-            housing.client.errorHelper(resp.result.error,'reserve()');
+            housing.endpoints.errorHelper(resp.result.error,'reserve()');
         },this);
         $("#loading").show();
     } else {
         // this is just for demo purposes
         // loop through the data until the clicked room is found
         // and add one to the occupants number. This simulates
-        // new data being returned from the housing.client.reserve
+        // new data being returned from the housing.endpoints.reserve
         // method.
-        var data = housing.currentData;
+        var data = housing.map.currentData;
         for( var k = 0; k < data.length; k += 1 ) {
-            if( data[k].number == housing.currentFloor ) {
+            if( data[k].number == housing.map.currentFloor ) {
                 data[k].rooms[i].occupants = d.occupants + 1;
                 break;
             }
         }
-        housing.load(data,housing.currentFloor,housing.d3svg);
+        housing.map.load(data,housing.map.currentFloor,housing.map.d3svg);
     }
 }
 
 /**
  * Handles clicks to the clear reservation button
  */
-housing.clearReservation = function(d,i) {
+housing.map.clearReservation = function(d,i) {
     // only do stuff if the button is enabled
     if(!d3.select(".clear-reservation").classed("disabled")){
-        if( housing.auth && housing.client ) {
-            housing.client.deleteReservation().then(function(resp){
-                housing.load(resp.result.floors,housing.currentFloor,housing.d3svg);
+        if( housing.endpoints ) {
+            housing.endpoints.deleteReservation().then(function(resp){
+                housing.map.currentData = resp.result.floors
+                housing.map.load(resp.result.floors,housing.map.currentFloor,housing.map.d3svg);
                 d3.select('.current-reservation').text('None');
                 d3.select('.clear-reservation').classed("disabled",true);
             },function(resp){
-                housing.client.errorHelper(resp.result.error,'deleteReservation()');
+                housing.endpoints.errorHelper(resp.result.error,'deleteReservation()');
             },this);
             $("#loading").show();
         } else {
@@ -244,37 +285,37 @@ housing.clearReservation = function(d,i) {
 /**
  * Handles tooltip mouseover events
  *
- * If housing.tooltip.show is called directly from the onmouseover event, the
+ * If housing.map.tooltip.show is called directly from the onmouseover event, the
  * tooltip will show up over the element directly under the mouse.  By intercepting
  * the event, we are able to direct d3-tip to display the tooltip over the parent
  * <g> element.
  */
-housing.showTooltip = function() {
+housing.map.showTooltip = function() {
     var args = Array.prototype.slice.call(arguments);
     var elem = d3.event.target;
     args.push(elem.parentNode);
 
-    housing.tooltip.show.apply(this,args);
+    housing.map.tooltip.show.apply(this,args);
 }
 
 /**
  * The style namespace contains functions to style d3 elements
  */
-housing.style = {
+housing.map.style = {
     transform: function(d){ return "translate("+d.x+" "+d.y+")"; },
     x: function(d){ return d.x; },
     y: function(d){ return d.y; },
     color: function(d){
         if(typeof d === "undefined") {
-            return housing.style.color;
+            return housing.map.style.color;
         }
         // find color based on number of occupants
         if(0 == d.occupants){
-            return housing.style.color.empty;
+            return housing.map.style.color.empty;
         }else if(d.occupants == d.capacity){
-            return housing.style.color.full;
+            return housing.map.style.color.full;
         }else{
-            return housing.style.color.partial;
+            return housing.map.style.color.partial;
         }
     },
     r: function(d){ return 4*Math.sqrt(Math.abs(10.5*d.capacity - 1)); },
@@ -290,21 +331,21 @@ housing.style = {
         return d.number;
     },
     titleOffset: function(d) {
-        return housing.style.r(d) + 10;
+        return housing.map.style.r(d) + 10;
     },
     imghref: function(d) {
         return "/img/049-"+d.number+".png";
     },
     imgvisibility: function(d){ 
-        if( housing.currentFloor == d.number ) { 
+        if( housing.map.currentFloor == d.number ) { 
             return "visible"; 
         } else { 
             return "hidden";
         }
     },
     bgpath: function(d) {
-        if(housing.style.paths.hasOwnProperty(d.bgpath)) {
-            return housing.style.paths[d.bgpath];
+        if(housing.map.style.paths.hasOwnProperty(d.bgpath)) {
+            return housing.map.style.paths[d.bgpath];
         } else {
             return d.bgpath;
         }
@@ -334,8 +375,8 @@ housing.style = {
     },
 };
 
-// Allow for statements of the form housing.style.color.empty
-housing.style.color.empty = "color-empty";
-housing.style.color.partial = "color-partial";
-housing.style.color.full = "color-full";
+// Allow for statements of the form housing.map.style.color.empty
+housing.map.style.color.empty = "color-empty";
+housing.map.style.color.partial = "color-partial";
+housing.map.style.color.full = "color-full";
 
