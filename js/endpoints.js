@@ -232,7 +232,7 @@ housing.endpoints.loadAdmin = function() {
             if(window.gapi && gapi.client.housing) {
                 var list = function(resp) {
                     promise._to_fulfill--;
-                    promise._the_list.append(resp.result);
+                    promise._the_list.push(resp.result);
                     if(0 === promise._to_fulfill) {
                         fcnSuccess(promise._the_list);
                     }
