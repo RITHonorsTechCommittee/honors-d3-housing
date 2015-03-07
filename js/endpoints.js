@@ -213,6 +213,81 @@ housing.endpoints.deleteReservation = function() {
 };
 
 /**
+ * Loads all four lists: students, rooms, admins, and editors and returns a
+ * thenable that will call the success callback with an array containing all
+ * the lists
+ *
+ * If the API is unavailable, `adminspec.json` is loaded an the array contained
+ * in its "d" property is returned.
+ *
+ * @return thenable which will provide an array of list ojects in resp.result if
+ *          the request is successful
+ */
+housing.endpoints.loadAdmin = function() {
+    promise = {
+        _to_fulfill: 4,
+        _the_list: [],
+        _failed: false,
+        then: function(fcnSuccess,fcnFailure) {
+            if(window.gapi && gapi.client.housing) {
+                var list = function(resp) {
+                    promise._to_fulfill--;
+                    promise._the_list.append(resp.result);
+                    if(0 === promise._to_fulfill) {
+                        fcnSuccess(promise._the_list);
+                    }
+                };
+
+                var err = function(resp) {
+                    var code = resp.result.error.code;
+                    if( code == 401 || code == 404 ) {
+                        // silently drop 401 and 404 errors
+                        promise._to_fulfill--;
+                        if(0 === promise._to_fulfill) {
+                            fcnSuccess(promise._the_list);
+                        }
+                    } else if( !promise._failed ) {
+                        promise._failed = true;
+                        fcnFailure(resp);
+                    }
+                };
+
+                if(gapi.client.housing.housing.getRoomList) {
+                    gapi.client.housing.housing.getRoomList().then(list,err);
+                }
+                if(gapi.client.housing.housing.getAdminList) {
+                    gapi.client.housing.housing.getAdminList().then(list,err);
+                }
+                if(gapi.client.housing.housing.getStudentList) {
+                    gapi.client.housing.housing.getStudentList().then(list,err);
+                }
+                if(gapi.client.housing.housing.getEditorList) {
+                    gapi.client.housing.housing.getEditorList().then(list,err);
+                }
+            } else {
+                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
+            }
+        }
+    };
+    return promise;
+};
+
+/**
+ * Wraps gapi.client.housing.housing.isOpen
+ */
+housing.endpoints.isOpen = function() {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.isOpen) {
+        return gapi.client.housing.housing.isOpen();
+    } else {
+        return {
+            then: function(fcnSuccess,fcnFailure){
+                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
+            }
+        };
+    }
+};
+
+/**
  * Reveals an error modal with the specified message.
  *
  * If log is truthy and console.log is supported, the parameter log will also
