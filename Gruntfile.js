@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     'string-replace': {
       dist: {
         files: {
-          'dist/':'dist/index.html'
+          'dist/':['dist/index.html','dist/admin.html']
         },
         options: {
           replacements: [
@@ -17,8 +17,10 @@ module.exports = function(grunt) {
             {pattern: /\/bower_components\/foundation\//g, replacement: '<%= cdn %>foundation/<%= found.version %>/'},
             {pattern: '/bower_components/jquery/dist/jquery.min.js', replacement: '//ajax.googleapis.com/ajax/libs/jquery/<%= jq.version %>/jquery.min.js'},
             {pattern: /\/bower_components/g, replacement: '/vendor'},
-            {pattern: /^.*="\/js\/(?!app).*\n/gm, replacement: ''}
-            /* remove separate js files and replace with app.js */
+            /* remove separate js files but leave app.js */
+            {pattern: /^.*="\/js\/(?!app).*\n/gm, replacement: ''},
+            /* change app.js to app.min.js */
+            {pattern: 'js/app.js', replacement: 'js/app.min.js'}
           ]
         }
       }
@@ -46,7 +48,7 @@ module.exports = function(grunt) {
     copy: {
       dist: {
         files: [
-          {src: 'index.html', dest: 'dist/'},
+          {src: ['index.html', 'admin.html'], dest: 'dist/'},
           {src: 'css/**/*', dest: 'dist/', expand:true},
           {src: 'img/*', dest: 'dist/', expand:true},
           {expand: true, cwd: 'bower_components/', src: ['d3/d3.js', 'd3-tip/index.js'], dest: 'dist/vendor/'}
