@@ -24,7 +24,7 @@
 
       <section class="top-bar-section">
           <ul class="right">
-              <li class="username">
+              <li id="username">
               </li>
               <li class="show-for-medium-up ritsearch">
                   <form method="get" action="http://www.rit.edu/search/">
@@ -128,8 +128,22 @@
 //housing.auth.hostname = "http://localhost:8080";
 // Google API callbacks don't work with namespaces
 function gapiCallback() {
-    housing.endpoints.login(housing.admin.start);
+    housing.endpoints.login().
+        then(housing.admin.start)
+        .catch(function(apiloaderror){
+            $('#loading').hide();
+            housing.endpoints.displayError( "Failed to establish connection with Google Endpoints", apiloaderror );
+        });
 }
+
+// Click handler for signin events
+housing.endpoints.signin = function() {
+  housing.endpoints.authorize(false, function(oauthresult){
+      if(oauthresult){
+          housing.endpoints.getUserInfo().then(housing.admin.start);
+      }
+  });
+};
 
 // Load foundation components
 $(document).foundation({
@@ -138,17 +152,17 @@ $(document).foundation({
         close_on_click: true
     }
 });
-</script>
-<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
-<script>
+
+//JQuery onload tasks
 $(function() {
   $(".toggle-help").click(function() {
     $("#instructions").toggleClass("instructions-open");
   });
+  $("#username").click(housing.endpoints.signin);
   if( !window.gapi ) {
-      // No google apis, start manually
       housing.admin.start(true);
   }
 });
 </script>
+<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
 </body>
