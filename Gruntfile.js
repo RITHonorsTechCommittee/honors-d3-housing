@@ -51,7 +51,7 @@ module.exports = function(grunt) {
           {src: ['index.html', 'admin.html'], dest: 'dist/'},
           {src: 'css/**/*', dest: 'dist/', expand:true},
           {src: 'img/*', dest: 'dist/', expand:true},
-          {expand: true, cwd: 'bower_components/', src: ['d3/d3.js', 'd3-tip/index.js'], dest: 'dist/vendor/'}
+          {expand: true, cwd: 'bower_components/', src: ['d3/d3.js', 'd3-tip/index.js', 'promises/promise.js', 'setImmediate/setimmediate.js'], dest: 'dist/vendor/'}
         ]
       }
     },

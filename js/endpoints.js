@@ -12,141 +12,108 @@ housing.endpoints = housing.endpoints || {};
 housing.endpoints.hostname = 'https://rithonorshousing.appspot.com';
 housing.endpoints.clientId = '180343920180-41f9qsqdcf9it1poolqtqages644lgs3.apps.googleusercontent.com';
 housing.endpoints.scopes = 'https://www.googleapis.com/auth/userinfo.email';
-housing.endpoints.serverError = "A server error has occurred. Please contact the developers of this website and report an error with ";
+housing.endpoints.serverError = "A server error has occurred. Please tell the developers of this website that there was a server error in ";
+housing.endpoints.apiError = "A client API error has occurred. Please tell the developers of this website that there was an API error in ";
 housing.endpoints.unauthorizedError = "You are not authorized to register for housing. Please check that you are logged in with an RIT Google account";
 
 /**
- * Loads Google APIs, attempts to log in the user and calls the provided
- * callback function with the results of the authentication attempt.
+ * Loads Google APIs, attempts to authorize the application, and
+ * sets up the signin/change user button.
+ *
+ * If the user is using multiple signin, any g.rit.edu domain accounts
+ * will be preferred, otherwise normal precedence is used.
+ *
+ * @return a promise that will return whether the user is logged in
+ *      or throw an error if the APIs could not be loaded
  */
+housing.endpoints.login = function() {
+    // By making these promises, we can ensure they only load once
+    housing.endpoints._apipromises = housing.endpoints._apipromises || [
+        gapi.client.load('housing', 'v1', null, housing.endpoints.hostname+"/_ah/api"),
+        gapi.client.load('oauth2', 'v2'),
+    ];
 
-/**
- * Loads Google APIs and calls housing.endpoints.check when done
- */
-housing.endpoints.login = function( callback ) {
-    var apisToLoad;
-    var loadCallback = function() {
-        if(--apisToLoad == 0) {
-            housing.endpoints.check( callback );
-        }
-    };
-
-    apisToLoad = 2;
-    gapi.client.load('housing', 'v1', loadCallback, housing.endpoints.hostname+"/_ah/api");
-    gapi.client.load('oauth2', 'v2', loadCallback);
-};
-
-/**
- * Checks if the user is logged in already. Will give precedence to RIT accounts
- * 
- * Passes credentials to housing.endpoints.result
- */
-housing.endpoints.check = function( callback ) {
-    housing.endpoints.app = callback;
-    gapi.auth.authorize({
-        client_id: housing.endpoints.clientId,
-        scope: housing.endpoints.scopes,
-        immediate: true,
-        hd: "g.rit.edu",
-    }, housing.endpoints.result );
-};
-
-/**
- * Event handler that executes when the user clicks the sign in/sign out button
- */
-housing.endpoints.click = function() {
-    gapi.auth.authorize({
-        client_id: housing.endpoints.clientId,
-        scope: housing.endpoints.scopes,
-        immediate: false,
-        authuser: "",
-    }, housing.endpoints.result);
-    return false;
-}
-
-/**
- * Starts the app. If the user is logged in, it puts their email in the title bar.
- */
-housing.endpoints.result = function( result ) {
-    // Get the user's email
-    gapi.client.oauth2.userinfo.get().then(function(resp){
-        // Put the email in the top bar so users can see which account they are logged in under
-        d3.select(".username").html(null)
-            .append("a")
-            .on("click", housing.endpoints.click)
-            .attr("title","Click to change accounts")
-            .text(resp.result.email);
-    },function(resp){
-        if(window.console && console.log){
-            console.log(resp.result.error);
-        }
+    return Promise.all(housing.endpoints._apipromises).then(function(results){
+        // If the apis load successfully, login and get the user info
+        return new Promise(function(fulfill,reject){
+            housing.endpoints.authorize( true, fulfill );
+        })
+        .then(housing.endpoints.getUserInfo);
     });
-
-    housing.endpoints.app((result && !result.error));
-}
+};
 
 /**
- * Wraps gapi.client.housing.housing.rooms
+ * Start OAuth2 auth flow.  If immediate is set to true, an account
+ * from the domain 'g.rit.edu' will be selected if possible, otherwise
+ * normal account precedence applies.
  *
- * Returns a thenable that will call the success callback with a floors object
- * and floor number. The floor number passed to this function will be used unless
- * a floor of that number does not exist.
+ * If you are just starting the housing app, you should use
+ * `housing.endpoints.login` because it combines api loading, authorization,
+ * and `housing.endpoints.getUserInfo` into one function.  However, `login`
+ * only works with `immediate` set to true because asynchonous functions
+ * cannot create popups.
  *
- * The failure callback to the thenable can be omitted to use the built in
- * error handling, but if a failure callback is supplied, the built in error
- * messages will not be triggered.
+ * @see gapi.auth.authorize for details of the authorization flow
  *
- * If the API is unavailable, a sample list of rooms from spec.json is returned
- *
- * @param floor The floor to load. This will be passed to the success callback
- * @return thenable thenable.then(fcnSuccess,fcnFailure)
+ * @param immediate if true, the function will return without creating a dialog
+ * @param callback a function to call with the authorization results
  */
-housing.endpoints.load = function(floor) {
-    return { then: function(fcnSuccess,fcnFailure){
-        // Load the floor. 
-        if(window.gapi && gapi.client.housing && gapi.client.housing.housing.rooms) {
-        // If the Google APIs are available, then get the list of
-        // available rooms through them.
-            gapi.client.housing.housing.rooms().then(
-                function(resp) {
-                    if(floor == undefined) {
-                        floor = resp.result.floors[0].number;
-                    }
-                    fcnSuccess(resp.result.floors, floor);
-                },
-                function(resp) {
-                    if( fcnFailure ) {
-                        fcnFailure(resp);
-                    } else {
-                        var code = resp.result.error.code;
-                        var msg = resp.result.error.message;
-                        if(code < 500){
-                            if(code == 401){
-                                housing.endpoints.displayError(housing.endpoints.unauthorizedError,resp.result.error);
-                                window.setTimeout(housing.app,0,false);
-                            } else {
-                                housing.endpoints.displayError(msg,resp.result.error);
-                            }
-                        } else {
-                            housing.endpoints.displayError(housing.endpoints.serverError+"'rooms()'");
-                        }
-                    }
-                });
-        } else {
-            // display example rooms if api not available
+housing.endpoints.authorize = function( immediate, callback ){
+    var authparams = {
+        client_id: housing.endpoints.clientId,
+        scope: housing.endpoints.scopes,
+        immediate: immediate,
+    };
+    if( immediate ) {
+        authparams.hd = 'g.rit.edu';
+    } else {
+        authparams.authuser = '';
+    }
+    gapi.auth.authorize(authparams, callback )
+};
+
+/**
+ * Loads the user info into the signin/change user button.
+ *
+ * @return a promise which returns true if a user is logged in
+ */
+housing.endpoints.getUserInfo = function() {
+    return Promise.resolve(gapi.client.oauth2.userinfo.get())
+        .catch(Promise.resolve)
+        .then(function(result){
+            if(result.result) {
+                // A response was received
+                d3.select("#username").html(null)
+                    .append("a")
+                    .attr("title","Click to change accounts")
+                    .text(result.result.email ? result.result.email : "Sign In");
+            }
+            return result.result && result.result.email;
+        });
+};
+
+/**
+* Wraps gapi.client.housing.housing.rooms
+*
+* Returns a promise which will be fulfilled with the floor list.
+* If the API is unavailable, a sample list of rooms from spec.json is returned
+*
+* @return a Promise that resolves to the floor list
+*/
+housing.endpoints.load = function() {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.rooms) {
+        return Promise.resolve(gapi.client.housing.housing.rooms());
+    } else {
+        return new Promise(function(fulfill,reject) {
             d3.json("/spec.json",function(err,jsonobj){
                 if(jsonobj){
-                    if(floor == undefined) {
-                        floor = jsonobj.floors[0].number;
-                    }
-                    fcnSuccess(jsonobj.floors,floor);
+                    fulfill({"result":{"floors":jsonobj.floors}});
                 } else {
-                    fcnFailure({"result":{"error":{ "code":600, "message": err}}});
+                    reject({"result":{"error":{ "code":600, "message": err}}});
                 }
             });
-        }
-    } // end of then function
-    } // end of thenable object
+        });
+    }
 };
 
 /**
@@ -160,13 +127,9 @@ housing.endpoints.load = function(floor) {
  */
 housing.endpoints.current = function() {
     if(window.gapi && gapi.client.housing && gapi.client.housing.housing.current) {
-        return gapi.client.housing.housing.current();
+        return Promise.resolve(gapi.client.housing.housing.current());
     } else {
-        return {
-            then: function(fcnSuccess,fcnFailure){
-                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
-            }
-        };
+        return Promise.reject({"result":{"error":{ "code":600, "message": "API Not Available"}}});
     }
 };
 
@@ -181,13 +144,9 @@ housing.endpoints.current = function() {
  */
 housing.endpoints.reserve = function(num) {
     if(window.gapi && gapi.client.housing && gapi.client.housing.housing.reserve) {
-        return gapi.client.housing.housing.reserve({"number":num});
+        return Promise.resolve(gapi.client.housing.housing.reserve({"number":num}));
     } else {
-        return {
-            then: function(fcnSuccess,fcnFailure){
-                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
-            }
-        };
+        return Promise.reject({"result":{"error":{ "code":600, "message": "API Not Available"}}});
     }
 };
 
@@ -202,13 +161,9 @@ housing.endpoints.reserve = function(num) {
  */
 housing.endpoints.deleteReservation = function() {
     if(window.gapi && gapi.client.housing && gapi.client.housing.housing.deleteReservation) {
-        return gapi.client.housing.housing.deleteReservation();
+        return Promise.resolve(gapi.client.housing.housing.deleteReservation());
     } else {
-        return {
-            then: function(fcnSuccess,fcnFailure){
-                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
-            }
-        };
+        return Promise.reject({"result":{"error":{ "code":600, "message": "API Not Available"}}});
     }
 };
 
@@ -220,56 +175,45 @@ housing.endpoints.deleteReservation = function() {
  * If the API is unavailable, `adminspec.json` is loaded an the array contained
  * in its "d" property is returned.
  *
- * @return thenable which will provide an array of list ojects in resp.result if
+ * @return promise which will provide an array of list objects in resp.result if
  *          the request is successful
  */
 housing.endpoints.loadAdmin = function() {
-    promise = {
-        _to_fulfill: 4,
-        _the_list: [],
-        _failed: false,
-        then: function(fcnSuccess,fcnFailure) {
-            if(window.gapi && gapi.client.housing) {
-                var list = function(resp) {
-                    promise._to_fulfill--;
-                    promise._the_list.push(resp.result);
-                    if(0 === promise._to_fulfill) {
-                        fcnSuccess(promise._the_list);
-                    }
-                };
-
-                var err = function(resp) {
-                    var code = resp.result.error.code;
-                    if( code == 401 || code == 404 ) {
-                        // silently drop 401 and 404 errors
-                        promise._to_fulfill--;
-                        if(0 === promise._to_fulfill) {
-                            fcnSuccess(promise._the_list);
-                        }
-                    } else if( !promise._failed ) {
-                        promise._failed = true;
-                        fcnFailure(resp);
-                    }
-                };
-
-                if(gapi.client.housing.housing.getRoomList) {
-                    gapi.client.housing.housing.getRoomList().then(list,err);
-                }
-                if(gapi.client.housing.housing.getAdminList) {
-                    gapi.client.housing.housing.getAdminList().then(list,err);
-                }
-                if(gapi.client.housing.housing.getStudentList) {
-                    gapi.client.housing.housing.getStudentList().then(list,err);
-                }
-                if(gapi.client.housing.housing.getEditorList) {
-                    gapi.client.housing.housing.getEditorList().then(list,err);
-                }
-            } else {
-                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
+    // define processing functions
+    
+    //silently ignore not found/not authenticated errors
+    //while rethrowing all other errors
+    var err = function(resp) {
+        if(resp.result && resp.result.error && resp.result.error.code) {
+            var code = resp.result.error.code;
+            if( 401 == code || 404 == code ) {
+                return null;
             }
         }
+        throw resp;
     };
-    return promise;
+    //extract the result object
+    var transform = function(resp) {
+        if(resp && resp.result) {
+            return resp.result;
+        } else {
+            return resp;
+        }
+    };
+    //remove null, false, or undefined values from the array
+    var stripnulls = function(arry) {
+        return arry.filter(function(d){return d != undefined;});
+    };
+
+    //build list of promises
+    var listpromises = [];
+    if(window.gapi && gapi.client.housing){
+        listpromises.push(Promise.resolve(gapi.client.housing.housing.getStudentList()).catch(err).then(transform));
+        listpromises.push(Promise.resolve(gapi.client.housing.housing.getRoomList()).catch(err).then(transform));
+        listpromises.push(Promise.resolve(gapi.client.housing.housing.getAdminList()).catch(err).then(transform));
+        listpromises.push(Promise.resolve(gapi.client.housing.housing.getEditorList()).catch(err).then(transform));
+    }
+    return Promise.all(listpromises).then(stripnulls);
 };
 
 /**
@@ -279,11 +223,7 @@ housing.endpoints.isOpen = function() {
     if(window.gapi && gapi.client.housing && gapi.client.housing.housing.isOpen) {
         return gapi.client.housing.housing.isOpen();
     } else {
-        return {
-            then: function(fcnSuccess,fcnFailure){
-                fcnFailure({"result":{"error":{ "code":600, "message": "API Not Available"}}});
-            }
-        };
+        return Promise.reject({"result":{"error":{ "code":600, "message": "API Not Available"}}});
     }
 };
 
@@ -319,21 +259,29 @@ housing.endpoints.displayError = function (msg,log) {
  * @param source a human readable description of where the error occurred.
  */
 housing.endpoints.errorHelper = function (error,source) {
+    // unpack error if necessary
+    if( error.error ) {
+        error = error.error;
+    }
+    // pick suitable default for source
+    if( source == null ) {
+        if( error.source ) {
+            source = error.source;
+        } else {
+            source = 'generic';
+        }
+    }
     var msg = "";
     if( error.code == 401 ) {
         msg = housing.endpoints.unauthorizedError;
         if(error.message.contains('@')){
             msg += "<br><br>"+error.message;
         }
-        window.setTimeout(housing.app,0,false);
+    } else if( error.code == 600 ) {
+        msg = housing.endpoints.apierror + "'" + source + "'<br><br>" + error.message;
     } else {
         if( error.code >= 500 ) {
-            msg = housing.endpoints.serverError;
-            if(source){
-                msg += "'"+source+"'";
-            } else {
-                msg += "'generic'";
-            }
+            msg = housing.endpoints.serverError + "'"+source+"'";
         } else {
             if(window.console && console.warn){
                 console.warn("housing.endpoints.unauthorized called with unrecognized error!");
