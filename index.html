@@ -24,7 +24,7 @@
 
       <section class="top-bar-section">
           <ul class="right">
-              <li class="username">
+              <li id="username">
               </li>
               <li class="show-for-medium-up ritsearch">
                   <form method="get" action="http://www.rit.edu/search/">
@@ -133,6 +133,8 @@
     </div>
   </div>
 </div>
+<script src="/bower_components/setImmediate/setimmediate.js" charset="utf-8"></script>
+<script src="/bower_components/promises/promise.js" charset="utf-8"></script>
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script src="/bower_components/foundation/js/foundation.min.js"></script>
 <script src="/bower_components/foundation/js/foundation/foundation.topbar.js"></script>
@@ -144,11 +146,27 @@
 <script src="/js/map.js" charset="utf-8"></script>
 <script src="/js/app.js" charset="utf-8"></script>
 <script>
-//housing.auth.hostname = "http://localhost:8080";
-// Google API callbacks don't work with namespaces
+// Set hostname for endpoints server
+//housing.endpoints.hostname = "http://localhost:8080";
+
+// Google API callback to trigger application startup
 function gapiCallback() {
-    housing.endpoints.login(housing.map.start);
+    housing.endpoints.login(true)
+        .then(housing.map.start)
+        .catch(function(apiloaderror){
+            $('#loading').hide();
+            housing.endpoints.displayError( "Failed to establish connection with Google Endpoints", apiloaderror );
+        });
 }
+
+// Click handler for signin events
+housing.endpoints.signin = function() {
+  housing.endpoints.authorize(false, function(oauthresult){
+      if(oauthresult){
+          housing.endpoints.getUserInfo().then(housing.map.start);
+      }
+  });
+};
 
 // Load foundation components
 $(document).foundation({
@@ -157,17 +175,18 @@ $(document).foundation({
         close_on_click: true
     }
 });
-</script>
-<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
-<script>
+
+//JQuery onload tasks
 $(function() {
   $(".toggle-help").click(function() {
     $("#instructions").toggleClass("instructions-open");
   });
+  $("#username").click(housing.endpoints.signin);
   if( !window.gapi ) {
       // No google apis, start manually
       housing.map.start(true);
   }
 });
 </script>
+<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
 </body>

@@ -1,0 +1,28 @@
+{
+    "d":[
+        {
+            "key":"Student List",
+            "strings":["rdp1545@g.rit.edu", "gjd8765@g.rit.edu"],
+            "kind":"housing#housingItem",
+            "etag":""
+        },
+        {
+            "key":"Room List",
+            "strings":["4140","4149","3174","5125"],
+            "kind":"housing#housingItem",
+            "etag":""
+        },
+        {
+            "key":"Editor List",
+            "strings":["cdp2263@g.rit.edu", "bmx3344@g.rit.edu"],
+            "kind":"housing#housingItem",
+            "etag":""
+        },
+        {
+            "key":"Admin List",
+            "strings":["kbodi@gmail.com", "rap2176@g.rit.edu", "dwg1111@g.rit.edu"],
+            "kind":"housing#housingItem",
+            "etag":""
+        }
+    ]
+}

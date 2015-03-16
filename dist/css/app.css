@@ -298,3 +298,37 @@ p.loading-text {
     top: 100%;
     left: 0;
 }
+
+/* -------------------------------------------------
+ * Administration Page
+ * -------------------------------------------------
+ */
+.list-header {
+    margin: 1rem; }
+    .list-header h1 {
+        display: inline-block;
+        font-size: 1.5em; }
+    .list-header button.button {
+        padding: 0;
+        width: 2rem;
+        height: 2rem;
+        float: right;
+        margin-left: 0.8rem; }
+    .list-section {
+        border: 1px solid #eee;
+        /*box-shadow: 1px 1px 2px gray;*/
+        margin-bottom: 1.875rem; }
+
+.list-area {
+    margin: 0.25rem; }
+
+.deletable {
+    margin-left: 0.125rem;
+    cursor: pointer; }
+    .deletable::after {
+        border-left: 1px solid #999;
+        margin-left: 0.5rem;
+        padding-left: 0.25rem;
+        content: 'x'; }
+    .deletable:hover {
+        background-color: #ccc;

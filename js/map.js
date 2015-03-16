@@ -30,18 +30,21 @@ housing.map.start = function(authorized) {
             .attr("width",768)
             .attr("height",609);
 
-        housing.endpoints.load().then(
-            function(floors,floor){
-                housing.map.init(svg,nav,floors,true);
-                housing.map.load(floors,floor,svg);
-            });
+        housing.endpoints.load().then(function(resp){
+            var floor = resp.result.floors[0].number; 
+            housing.map.init(svg,nav,resp.result.floors,true);
+            housing.map.load(resp.result.floors,floor,svg);
+        }).catch(function(resp){
+            $("#loading").hide();
+            housing.endpoints.errorHelper(resp.result ? resp.result : resp, 'housing.map.start');
+        });
     } else {
         // If not signed in, clear navigation and insert signin button.
         nav.html(null);
         nav.append("a")
             .classed("button",true)
             .text("Sign In")
-            .on("click",housing.endpoints.click);
+            .on("click",housing.endpoints.signin);
         // message for IE users
         nav.append("p").text("Note: there is a current bug with Google Sign In and Internet Explorer.  If you are using Internet Explorer and you end up with a blank window after sigining in, close the window and click Sign In again.");
         $("#loading").hide();
@@ -265,19 +268,18 @@ housing.map.clickRoom = function(d,i) {
 housing.map.clearReservation = function(d,i) {
     // only do stuff if the button is enabled
     if(!d3.select(".clear-reservation").classed("disabled")){
-        if( housing.endpoints ) {
-            housing.endpoints.deleteReservation().then(function(resp){
-                housing.map.currentData = resp.result.floors
-                housing.map.load(resp.result.floors,housing.map.currentFloor,housing.map.d3svg);
-                d3.select('.current-reservation').text('None');
-                d3.select('.clear-reservation').classed("disabled",true);
-            },function(resp){
-                housing.endpoints.errorHelper(resp.result.error,'deleteReservation()');
-            },this);
-            $("#loading").show();
-        } else {
-            alert("API not available");
-        }
+        $('#loading').show();
+        housing.endpoints.deleteReservation()
+        .then(function(resp){
+            housing.map.currentData = resp.result.floors
+            housing.map.load(resp.result.floors,housing.map.currentFloor,housing.map.d3svg);
+            d3.select('.current-reservation').text('None');
+            d3.select('.clear-reservation').classed("disabled",true);
+        }).catch(function(err){
+            housing.endpoints.errorHelper(err.result ? err.result : err,'deleteReservation()');
+        }).then(function(){
+            $("#loading").hide();
+        });
     }
     d3.event.preventDefault();
 }

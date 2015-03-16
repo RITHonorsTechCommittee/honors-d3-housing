@@ -3,8 +3,8 @@
 <head>
   <title>Honors Housing Selection</title>
   <meta charset="utf-8"> 
-  <link rel=stylesheet href="//cdn.jsdelivr.net/foundation/5.4.7/css/normalize.css">
-  <link rel=stylesheet href="//cdn.jsdelivr.net/foundation/5.4.7/css/foundation.css">
+  <link rel=stylesheet href="/bower_components/foundation/css/normalize.css">
+  <link rel=stylesheet href="/bower_components/foundation/css/foundation.css">
   <link rel=stylesheet href="/css/fonts/foundation-icons.css">
   <link rel=stylesheet href="/css/app.css">
   <link rel="shortcut icon" href="/img/logo.png">
@@ -74,43 +74,23 @@
   <!-- END OFF CANVAS MENU -->
 <!--  END NAVIGATION STUFF  -->
 
-<!-- BEGIN HOUSING SELECTION PART -->
+<!-- BEGIN ADMIN INTERFACE -->
     <div class="row">
       <section>
-        <h1>Honors Housing Selection</h1>
-        <h3>Pick a Floor and Click a Room To Reserve It <a class="toggle-help" href="#" >(?)</a></h3>
-        </script>
+        <h1>Honors Housing Administration <a class="toggle-help" href="#" >(?)</a></h1>
         <div id="instructions">
           <div id="instructions-inner">
-            <h2>Gibson Hall Sign Up Instructions</h2>
-            <ol>
-              <li>
-                Members that wish to live in Honors housing for the 2015-2016 academic year
-                must go online to <a href="http://myhousing.rit.edu">myhousing.rit.edu</a>
-                to register for Housing Selection Phase II sometime between December 1, 2014 and
-                December 7, 2014.  Members must choose Honors Housing as one of their housing options.
-              </li>
-              <li>
-                 After completing the online registration at <a href="http://myhousing.rit.edu">myhousing.rit.edu</a>, members must
-                 log in to this website using their <a href="http://google.rit.edu/">RIT Google account</a> information and reserve
-                 the room they wish to live in for the 2015-2016 academic year.
-                <ul>
-                  <li>
-                    To reserve a room on this website, simply click on the room you wish to reserve.  The room must have available space.
-                    Empty rooms are represented with entirely green circles.  Occupants are represented by blue sections of the circle, and a
-                    full room is shown with a red circle.
-                  </li>
-                </ul>
-              </li>
-              <li>If you do not sign up in <strong>both</strong> systems, you <strong>will not</strong> be placed in Gibson.</li>
-                </ul>
-              </li>
-              <li>
-                If you would like a single, sign up on the roster in a double, then email
-                <a href="mailto:honors@rit.edu">honors@rit.edu</a> to request a single. Single rooms
-                have an added cost and are assigned on a first come first serve basis.
-              </li>
-            </ol>
+            <h2>Administrative Tasks</h2>
+            <dl>
+              <dt>Manage Rooms</dt>
+              <dd>Rooms numbers and occupancy levels are shown under Manage Rooms.  Remove rooms by clicking the "x" next to the room number.  Add rooms (or replace the whole list) by clicking "Manage Rooms" and then selecting the appropriate button. If there is a room with the wrong occupancy, contact Tech Committee</dd>
+              <dt>Manage Students</dt>
+              <dd>The student list shows the email addresses that are allowed to register for rooms.  Manage them the same way you would manage rooms.</dd>
+              <dt>Manage Admins</dt>
+              <dd>Administrators have full access to the housing website including changing lists and downloading the list of reservations.</dd>
+              <dt>Manage Editors</dt>
+              <dd>Editors are students in Tech Committee who have limited access the the housing website, for correcting changes.  Unless you are in tech committee, you probably don't need to worry about this box.</dd>
+            </dl>
             <input type="button" value="Got it!" class="toggle-help" />
           </div>
         </div>
@@ -133,24 +113,23 @@
     </div>
   </div>
 </div>
-<script src="/vendor/setImmediate/setimmediate.js" charset="utf-8"></script>
-<script src="/vendor/promises/promise.js" charset="utf-8"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation.min.js"></script>
-<script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation/foundation.topbar.js"></script>
-<script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation/foundation.offcanvas.js"></script>
-<script src="//cdn.jsdelivr.net/foundation/5.4.7/js/foundation/foundation.reveal.js"></script>
-<script src="/vendor/d3/d3.js" charset="utf-8"></script>
-<script src="/vendor/d3-tip/index.js" charset="utf-8"></script>
-<script src="/js/app.min.js" charset="utf-8"></script>
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/foundation/js/foundation.min.js"></script>
+<script src="/bower_components/foundation/js/foundation/foundation.topbar.js"></script>
+<script src="/bower_components/foundation/js/foundation/foundation.offcanvas.js"></script>
+<script src="/bower_components/foundation/js/foundation/foundation.reveal.js"></script>
+<script src="/bower_components/d3/d3.js" charset="utf-8"></script>
+<script src="/bower_components/d3-tip/index.js" charset="utf-8"></script>
+<script src="/js/endpoints.js" charset="utf-8"></script>
+<script src="/js/map.js" charset="utf-8"></script>
+<script src="/js/admin.js" charset="utf-8"></script>
+<script src="/js/app.js" charset="utf-8"></script>
 <script>
-// Set hostname for endpoints server
-//housing.endpoints.hostname = "http://localhost:8080";
-
-// Google API callback to trigger application startup
+//housing.auth.hostname = "http://localhost:8080";
+// Google API callbacks don't work with namespaces
 function gapiCallback() {
-    housing.endpoints.login(true)
-        .then(housing.map.start)
+    housing.endpoints.login().
+        then(housing.admin.start)
         .catch(function(apiloaderror){
             $('#loading').hide();
             housing.endpoints.displayError( "Failed to establish connection with Google Endpoints", apiloaderror );
@@ -161,7 +140,7 @@ function gapiCallback() {
 housing.endpoints.signin = function() {
   housing.endpoints.authorize(false, function(oauthresult){
       if(oauthresult){
-          housing.endpoints.getUserInfo().then(housing.map.start);
+          housing.endpoints.getUserInfo().then(housing.admin.start);
       }
   });
 };
@@ -181,8 +160,7 @@ $(function() {
   });
   $("#username").click(housing.endpoints.signin);
   if( !window.gapi ) {
-      // No google apis, start manually
-      housing.map.start(true);
+      housing.admin.start(true);
   }
 });
 </script>

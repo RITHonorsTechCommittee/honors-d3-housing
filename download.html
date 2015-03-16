@@ -1,0 +1,77 @@
+<DOCTYPE html>
+<html>
+<head>
+  <title>Download reservations</title>
+  <meta charset="utf-8"> 
+  <link rel=stylesheet href="/bower_components/foundation/css/normalize.css">
+  <link rel=stylesheet href="/bower_components/foundation/css/foundation.css">
+<table>
+</table>
+  
+<script src="/bower_components/d3/d3.js" charset="utf-8"></script>
+<script src="/js/housing.js" charset="utf-8"></script>
+<script src="/js/auth.js" charset="utf-8"></script>
+<script src="/js/client.js" charset="utf-8"></script>
+<script>
+// Google API callbacks don't work with namespaces
+function gapiCallback() {
+  d3.select("body").append("p").text("loading...").classed("loading",true);
+  housing.auth.init();
+}
+
+// Comment this out to modify the production server
+//housing.auth.hostname = "http://localhost:8080";
+
+housing.app = function(authenticated){
+  d3.select(".loading").html(null);
+  if(authenticated) {
+    d3.select(".button").data([]).exit().remove();
+
+    d3.select("body").append("a")
+      .classed("button",true)
+      .text("Download List")
+      .on("click",housing.download.list);
+
+  } else {
+    d3.select("body")
+      .append("a")
+        .classed("button", true)
+        .text("Sign In")
+        .on("click",housing.auth.click);
+  }
+};
+
+housing.download = housing.download || {};
+
+housing.download.list = function() {
+    if(window.gapi && gapi.client.housing && gapi.client.housing.housing.rooms) {
+        // If the Google APIs are available, then get the list of
+        // available rooms through them.
+        gapi.client.housing.housing.rooms().then(
+            function(resp) {
+                //process and display
+                var tbl = d3.select("table")
+                var floors = resp.result.floors;
+                for(i in floors){
+                    for(j in floors[i].rooms){
+                        var room = floors[i].rooms[j];
+                        if(room.occupantNames){
+                            for(k in room.occupantNames){
+                                var row = tbl.append("tr");
+                                row.append("td").text(room.number);
+                                row.append("td").text(room.occupantNames[k]);
+                            }
+                        }
+                    }
+                }
+            },
+            function(resp) {
+                d3.select("body").append("pre").text(resp.result);
+            }
+        );
+    }
+}
+</script>
+<script src="https://apis.google.com/js/client.js?onload=gapiCallback"></script>
+</body>
+</html>
