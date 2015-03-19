@@ -1758,6 +1758,7 @@ button::-moz-focus-inner {
         display: inline-block;
         display: block;
         margin: 0; }
+        .button-group.stack-for-small { width: 90%; margin: 0 auto; }
         .button-group.stack-for-small > li > button, .button-group.stack-for-small > li .button {
           border-left: 1px solid;
           border-color: rgba(255, 255, 255, 0.5); }
