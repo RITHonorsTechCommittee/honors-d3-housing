@@ -152,6 +152,10 @@ li.ritsearch {
 
 /* Styles for housing selection */
 
+#selection {
+    overflow-x: scroll;
+}
+
 .color-empty {
   fill: #00FF00; }
 
@@ -180,8 +184,7 @@ div#instructions {
     background-color: #EEEEEE;
     overflow: hidden;
     max-height: 0px;
-    width: 83%;
-    min-width: 387px;
+    width: 100%;
     margin-bottom: 5px;
     transition: max-height 800ms ease;
 }
