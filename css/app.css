@@ -152,6 +152,10 @@ li.ritsearch {
 
 /* Styles for housing selection */
 
+#selection {
+    overflow-x: scroll;
+}
+
 .color-empty {
   fill: #00FF00; }
 
@@ -180,8 +184,7 @@ div#instructions {
     background-color: #EEEEEE;
     overflow: hidden;
     max-height: 0px;
-    width: 83%;
-    min-width: 387px;
+    width: 100%;
     margin-bottom: 5px;
     transition: max-height 800ms ease;
 }
@@ -215,6 +218,7 @@ p.loading-text {
     font-size: 28px;
     margin-top: 50px;
     text-indent: 30px;
+    z-index:99;
 }
 
 .load-anim {
@@ -266,7 +270,8 @@ p.loading-text {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba( 150, 150, 150, 0.5 );
+    background-color: rgba( 150, 150, 150, 0.7 );
+    z-index: 98;
 }
 
 /* Tooltip styles, taken from http://bl.ocks.org/Caged/6476579 */
