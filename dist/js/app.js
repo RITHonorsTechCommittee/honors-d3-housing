@@ -631,9 +631,9 @@ housing.map.init = function(d3svg,nav,data,enableTooltip) {
         
         //Set up button groups
         var floors = nav.append("ul")
-            .classed("floors button-group",true);
+            .classed("stack-for-small floors button-group",true);
         var otherbuttons = nav.append("ul")
-            .classed("button-group round",true);
+            .classed("stack-for-small button-group",true);
         floors.selectAll("li")
                 .data(data)
             .enter()
