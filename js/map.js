@@ -336,7 +336,7 @@ housing.map.style = {
         return housing.map.style.r(d) + 10;
     },
     imghref: function(d) {
-        return "/img/049-"+d.number+".png";
+        return "/img/049-"+d.number+"-labeled.png";
     },
     imgvisibility: function(d){ 
         if( housing.map.currentFloor == d.number ) { 
